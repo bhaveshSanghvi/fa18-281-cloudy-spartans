@@ -34,4 +34,28 @@
    - Discussed on the modules to be developed
    - Assigned tasks to respective individuals and added the same on the kanban project board
    
+## Meeting - 4
+<b>Date</b>      : 19-November-2018   
+<b>Time</b>      : 12:30PM - 1:30PM   
+<b>Place</b>     : MLK Library     
+<b>Attendees</b> : All team members 
+
+<b>Discussion Summary</b> :
+ 
+   - Discussed on the front end modules to be developed
+   - Discussed on means of communications between databases
+   - Discussed on possible test scenarios for data exchange between API's (internal GO API)
+   
+   
+## Meeting - 5
+<b>Date</b>      : 19-November-2018   
+<b>Time</b>      : 11:30PM - 12:30AM    
+<b>Place</b>     : Zoom (Online)  
+<b>Attendees</b> : All team members 
+
+<b>Discussion Summary</b> :
+ 
+   - Review on UI modules
+   - Discussed on VPC peering between nodes and discussed the non overlapping scenarios of CIDR blocks
+   - Updated individual tasks
    
