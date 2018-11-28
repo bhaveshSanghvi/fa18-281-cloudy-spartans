@@ -4,7 +4,7 @@ go-get:
 build:
 	go build 
 start:
-	./fa18-281-cloudy-spartans
+	./Riak
 test-riak:
 	curl -i http://10.0.1.218:8098/types/ccs/buckets/users/keys/admin
 
