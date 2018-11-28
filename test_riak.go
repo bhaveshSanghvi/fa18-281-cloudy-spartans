@@ -85,6 +85,9 @@ func main(){
 
 }
 
+
+//Reference : https://github.com/basho/riak-go-client/blob/master/examples/dev/using/basics/main.go
+
 func storeRufus(cluster *riak.Cluster) {
 	obj := &riak.Object{
 		ContentType:     "text/plain",
