@@ -9,4 +9,3 @@ type Drink struct {
         Size        string        `bson:"size" json:"size"`
 	Description string        `bson:"description" json:"description"`
 }
-
