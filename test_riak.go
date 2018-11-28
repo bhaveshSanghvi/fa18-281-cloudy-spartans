@@ -80,27 +80,32 @@ func main(){
 		fmt.Println("Cluster started")
 	}
 
-	storeRufus(cluster)
-	fetchRufus(cluster)	
+	insertData(cluster)
+	fetchData(cluster)	
+	updateData(cluster)
+	fetchData(cluster)
+	deleteData(cluster)
 
 }
 
-
 //Reference : https://github.com/basho/riak-go-client/blob/master/examples/dev/using/basics/main.go
 
-func storeRufus(cluster *riak.Cluster) {
+func insertData(cluster *riak.Cluster) {
 	obj := &riak.Object{
-		ContentType:     "text/plain",
+		ContentType:     "application/json",
 		Charset:         "utf-8",
 		ContentEncoding: "utf-8",
-		Value:           []byte("WOOF!"),
+		Key:		 "admin",
+		Value:           []byte("{'firstname':'preethi'}"),
 	}
 
 	cmd, err := riak.NewStoreValueCommandBuilder().
-		WithBucket("dogs").
-		WithKey("rufus").
+		WithBucketType("ccs").
+		WithBucket("users").
 		WithContent(obj).
 		Build()
+
+//	fmt.Println("Done riak.Store") 
 
 	if err != nil {
 		fmt.Println("[RIAK DEBUG] " + err.Error())
@@ -113,14 +118,15 @@ func storeRufus(cluster *riak.Cluster) {
 	}
 
 	svc := cmd.(*riak.StoreValueCommand)
-	rsp := svc.Response
-	fmt.Println("rsp.VClock",rsp.VClock)
+	rsp_svc := svc.Response
+	fmt.Println((rsp_svc.VClock))
 }
 
-func fetchRufus(cluster *riak.Cluster) {
+func fetchData(cluster *riak.Cluster) {
 	cmd, err := riak.NewFetchValueCommandBuilder().
-		WithBucket("dogs").
-		WithKey("rufus").
+		WithBucketType("ccs").
+		WithBucket("users").
+		WithKey("admin").
 		Build()
 
 	if err != nil {
@@ -140,5 +146,67 @@ func fetchRufus(cluster *riak.Cluster) {
 		fmt.Println(string(rsp.Values[0].Value))
 	} else {
 		fmt.Println("Value not found!")
+	}
+}
+
+func updateData(cluster *riak.Cluster) {
+	cmd, err := riak.NewFetchValueCommandBuilder().
+		WithBucketType("ccs").
+		WithBucket("users").
+		WithKey("admin").
+		Build()
+
+	if err != nil {
+		fmt.Println("[RIAK DEBUG] " + err.Error())
+		return
+	}
+
+	if err = cluster.Execute(cmd); err != nil {
+		fmt.Println("[RIAK DEBUG] " + err.Error())
+		return
+	}
+
+	fvc := cmd.(*riak.FetchValueCommand)
+	rsp := fvc.Response
+	obj := rsp.Values[0]
+	obj.Value = []byte("{'firstname':'abhishek'},{'age':'24'}")
+
+	cmd, err = riak.NewStoreValueCommandBuilder().
+		WithBucketType("ccs").
+		WithBucket("users").
+		WithContent(obj).
+		Build()
+
+	if err != nil {
+		fmt.Println("[RIAK DEBUG] " + err.Error())
+		return
+	}
+
+	if err = cluster.Execute(cmd); err != nil {
+		fmt.Println("[RIAK DEBUG] " + err.Error())
+		return
+	}
+
+	svc := cmd.(*riak.StoreValueCommand)
+	rsp_svc := svc.Response
+	fmt.Println((rsp_svc.VClock))
+
+}
+
+func deleteData(cluster *riak.Cluster){
+	cmd, err := riak.NewDeleteValueCommandBuilder().
+		WithBucketType("ccs").
+		WithBucket("users").
+		WithKey("admin").
+		Build()
+
+	if err != nil {
+		fmt.Println(err.Error())
+		return
+	}
+
+	if err = cluster.Execute(cmd); err != nil {
+		fmt.Println(err.Error())
+		return
 	}
 }
