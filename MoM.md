@@ -58,4 +58,16 @@
    - Review on UI modules
    - Discussed on VPC peering between nodes and discussed the non overlapping scenarios of CIDR blocks
    - Updated individual tasks
-   
+
+## Meeting - 6
+<b>Date</b>      : 28-November-2018   
+<b>Time</b>      : 11:30PM - 12:45AM    
+<b>Place</b>     : Zoom (Online)  
+<b>Attendees</b> : All team members
+<b>Discussion Summary</b> :
+ 
+   - Interaction between individual APIs
+   - Discussed on Mongo Session issues
+   - Discussed on data flow
+   - Reviewed the API codes committed till now.
+ 
