@@ -1,13 +1,6 @@
 import React from 'react';
-// import OwnerNavBar from '../OwnerNavBar/OwnerNavBar';
-// import OwnerSideBar from '../OwnerSideBar/OwnerSideBar';
-// import OwnerProperty from '../OwnerProperty/OwnerProperty';
-// import OwnerNavigation from '../OwnerNavigation/OwnerNavigation';
-// import NavDropDown from '../OwnerNavigation/NavDropDown'
- import './DrinksCatalog.css'
+import './DrinksCatalog.css'
 import {Redirect} from 'react-router';
-// import cookie from 'react-cookies'
-// import OwnerPropertyPlaces from '../OwnerPropertyPlaces/OwnerPropertyPlaces'
 import Drinks from '../Drinks/Drinks'
 import Navigation from '../StarterPage/Navigation'
 

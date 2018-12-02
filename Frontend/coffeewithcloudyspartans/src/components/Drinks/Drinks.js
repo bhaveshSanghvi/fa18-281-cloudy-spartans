@@ -10,8 +10,7 @@ import React,{Component} from 'react';
 // import Typography from '@material-ui/core/Typography';
 // import {Redirect} from 'react-router-dom';
 import './Drinks.css';
- import {Route} from 'react-router-dom'
-// import PlaceDescription from '../PlaceDescription/PlaceDescription';
+import {Route} from 'react-router-dom'
 // import  { Carousel, CarouselInner, CarouselItem, View, Container } from 'mdbreact';
  import Link from 'react-router-dom/Link';
 
@@ -28,7 +27,6 @@ class Drinks extends Component {
   componentDidMount()
   {
         fetch('http://localhost:4004/getDrinkImg', {
-       //  fetch('http://13.52.55.245:4004/getPropertyImg', {
           method: 'post',
           headers: {'Content-Type': 'application/json'},
           credentials : 'include',
@@ -53,7 +51,6 @@ class Drinks extends Component {
   }
   render()
   {
-	/*let redirect_url = "/places/propertydescription/"+this.props.id*/
 
     let carousalBlock = this.state.photos.map(function (item, index) {
 

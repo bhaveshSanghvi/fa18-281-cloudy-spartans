@@ -1,23 +1,6 @@
 import React from 'react';
-// import DatePicker from 'react-datepicker';
-// import Paper from 'material-ui/Paper';
-// import IconButton from 'material-ui/IconButton';
-// //import DatePicker from 'material-ui/DatePicker'
-// import ActionHome from 'material-ui/svg-icons/action/home';
-// import moment from 'moment';
-// import 'react-datepicker/dist/react-datepicker.css';
-// //import NavBar from '../NavBar/NavBar';
-// import TravelHistory from '../TripsBoard/TravelHistory';
 import {Redirect} from 'react-router-dom';
-// import SearchBar from '../SearchBar/SearchBar';
-// import NavBar from '../NavBar/NavBar';
-// import './StarterPage.css'
-// import { DateTimePicker } from 'react-widgets'
 import Navigation from './Navigation';
-// import BackgroundImage from 'react-background-image-loader';
-// import AliceCarousel from 'react-alice-carousel';
-// import "react-alice-carousel/lib/alice-carousel.css";
-
 import cookie from 'react-cookies'
 
 
