@@ -6,11 +6,11 @@ import(
 )
 
 var debug = true
-var riak1 = "10.0.1.218:8087"
-var riak2 = "10.0.1.53:8087"
-var riak3 = "10.0.1.90:8087"
-var riak4 = "10.0.3.50:8087"
-var riak5 = "10.0.3.237:8087"
+var riak1 = "10.0.1.182:8087"
+var riak2 = "10.0.1.151:8087"
+var riak3 = "10.0.1.153:8087"
+var riak4 = "172.16.1.247:8087"
+var riak5 = "172.16.1.119:8087"
 
 func main(){
 
@@ -96,11 +96,11 @@ func insertData(cluster *riak.Cluster) {
 		Charset:         "utf-8",
 		ContentEncoding: "utf-8",
 		Key:		 "admin",
-		Value:           []byte("{'firstname':'preethi'}"),
+		Value:           []byte("{'firstname':'hansraj'}"),
 	}
 
 	cmd, err := riak.NewStoreValueCommandBuilder().
-		WithBucketType("ccs").
+		// WithBucketType("ccs").
 		WithBucket("users").
 		WithContent(obj).
 		Build()
@@ -124,7 +124,7 @@ func insertData(cluster *riak.Cluster) {
 
 func fetchData(cluster *riak.Cluster) {
 	cmd, err := riak.NewFetchValueCommandBuilder().
-		WithBucketType("ccs").
+		// WithBucketType("ccs").
 		WithBucket("users").
 		WithKey("admin").
 		Build()
@@ -151,7 +151,7 @@ func fetchData(cluster *riak.Cluster) {
 
 func updateData(cluster *riak.Cluster) {
 	cmd, err := riak.NewFetchValueCommandBuilder().
-		WithBucketType("ccs").
+		// WithBucketType("ccs").
 		WithBucket("users").
 		WithKey("admin").
 		Build()
@@ -172,7 +172,7 @@ func updateData(cluster *riak.Cluster) {
 	obj.Value = []byte("{'firstname':'abhishek'},{'age':'24'}")
 
 	cmd, err = riak.NewStoreValueCommandBuilder().
-		WithBucketType("ccs").
+		// WithBucketType("ccs").
 		WithBucket("users").
 		WithContent(obj).
 		Build()
@@ -195,7 +195,7 @@ func updateData(cluster *riak.Cluster) {
 
 func deleteData(cluster *riak.Cluster){
 	cmd, err := riak.NewDeleteValueCommandBuilder().
-		WithBucketType("ccs").
+		// WithBucketType("ccs").
 		WithBucket("users").
 		WithKey("admin").
 		Build()
