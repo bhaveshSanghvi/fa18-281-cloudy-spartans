@@ -4,7 +4,6 @@ import (
 	"fmt"
 	"log"
 	"net/http"
-	"os"
 	"encoding/json"
 	"github.com/codegangsta/negroni"
 	// "github.com/streadway/amqp"
@@ -122,6 +121,7 @@ func initRoutes(mx *mux.Router, formatter *render.Render) {
 	mx.HandleFunc("/ping", pingHandler(formatter)).Methods("GET")
 	mx.HandleFunc("/signup", signupHandler(formatter)).Methods("POST")
 	mx.HandleFunc("/login", loginHandler(formatter)).Methods("POST")
+	mx.HandleFunc("/allusers", allusersHandler(formatter)).Methods("GET")
 }
 
 // API Ping Handler
@@ -200,6 +200,20 @@ func loginHandler(formatter *render.Render) http.HandlerFunc {
 	}
 }
 
+func allusersHandler(formatter *render.Render) http.HandlerFunc {
+	return func(w http.ResponseWriter, req *http.Request) {
+		c1 := NewClient(riak_node1)
+		list_users, error := c1.GetAllUsers()
+
+		if error != nil {
+			log.Fatal(error)
+			formatter.JSON(w, http.StatusBadRequest, error)
+		} else {
+			formatter.JSON(w, http.StatusOK, list_users)	
+		}
+	}
+}
+
 func (c *Client) RegisterUser(key string, reqbody string) (user, error) {
 	var ord_nil = user {}
 
@@ -245,6 +259,47 @@ func (c *Client) GetUser(key string) (user, error) {
 	}
 	fmt.Println("ord is",ord)
 	return ord, nil
+}
+
+func (c *Client) GetAllUsers() ([]string, error) {
+	fmt.Println("inside getall")
+	var all_keys []string
+	
+	resp, error := c.Get(c.Endpoint + "/buckets/users/keys?keys=true")
+	
+	if error != nil {
+		fmt.Println("[RIAK DEBUG] " + error.Error())
+		return all_keys, error
+	}
+	
+	defer resp.Body.Close()
+
+	rbody, error := ioutil.ReadAll(resp.Body)
+
+	if debug { 
+		fmt.Println("[RIAK DEBUG] GET: " + c.Endpoint + "/buckets/users/keys/keys?true => " + string(rbody)) 
+	}
+
+	// var ord1 = user { }
+	var all_keys_list Keys
+
+	if err := json.Unmarshal(rbody, &all_keys_list); err != nil {		
+		fmt.Println("RIAK DEBUG] JSON unmarshaling failed: %s", err)
+		return all_keys_list.Keys, err
+	}
+	fmt.Println("Keys are",all_keys_list.Keys)
+	return all_keys_list.Keys, nil
+	
+	// var output user
+	//  msg := json.Unmarshal(body, &output); 
+	//  fmt.Println("output", output)
+
+	// if msg != nil {
+	// 	fmt.Println("[RIAK DEBUG] JSON unmarshaling failed: %s", msg)
+	// 	return ord_nil, msg
+	// }	
+	// fmt.Println("ord is",output)
+	// return msg, nil
 }
 
 func ErrorWithJSON(w http.ResponseWriter, message string, code int) {

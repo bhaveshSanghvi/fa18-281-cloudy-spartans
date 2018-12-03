@@ -6,3 +6,7 @@ type user struct {
 	UserType	string 	`json:"UserType"`
 	Password   	string	`json:"Password"`
 }
+
+type Keys struct {
+	Keys []string
+}
