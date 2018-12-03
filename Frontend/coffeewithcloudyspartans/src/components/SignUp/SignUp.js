@@ -5,49 +5,44 @@ import {Redirect} from 'react-router-dom';
 import cookie from 'react-cookies';
 class SignUp extends React.Component {
 
-  constructor(props) {
+   constructor(props) {
     super(props);
     this.state = {
-      FirstName : '',
-      LastName : '',
+      Userid : '',
       PrimaryEmail : '',
       Password: '',
-      Username : '',
+      UserType : '',
       Redirection_Value : false,
       errors : false
     }
+  }  
+
+  onUseridChange = (event) => {
+    this.setState({Userid: event.target.value})
   }
 
-  onFirstNameChange = (event) => {
-    this.setState({FirstName: event.target.value})
-  }
-
-  onLastNameChange = (event) => {
-    this.setState({LastName: event.target.value})
-  }
 
   onPrimaryEmailChange = (event) => {
     this.setState({PrimaryEmail: event.target.value})
   }
 
-   onUsernameChange  = (event) => {
-    this.setState({Username: event.target.value})
+   onUserTypeChange  = (event) => {
+    this.setState({UserType: event.target.value})
   }
 
   onPasswordChange = (event) => {
-    this.setState({signInPassword: event.target.value})
+    this.setState({Password: event.target.value})
   }
 
   onSubmitSignIn = () => {
-    fetch('http://localhost:4004/traveller/signup', {
+    fetch('http://localhost:4004/signup', {
       method: 'post',
       headers: {'Content-Type': 'application/json'},
       credentials : 'include',
       body: JSON.stringify({
-        firstname: this.state.FirstName,
-        lastname: this.state.LastName,
-        username: this.state.Username,
-        password: this.state.signInPassword,
+        firstname: this.state.Userid,
+        usertype: this.state.UserType,
+        password: this.state.Password,
         email : this.state.PrimaryEmail
       })
     })
@@ -58,13 +53,15 @@ class SignUp extends React.Component {
         }
       else
         {
-          response.json()
+          alert("User Signed Up")
+         /* response.json()
           .then(user => {
           console.log("NAME" + user)
           this.props.loadUser(user);
           this.setState({Redirection_Value : true})
           })
-        }
+        */
+       }
       })
   }
 
@@ -93,22 +90,19 @@ class SignUp extends React.Component {
           <Row >
             <Col md="4" className="mx-auto">
               <Card>
-                <CardBody className="mx-4">
+                 <CardBody className="mx-4">
                   <div className="text-center">
                     <h3 className="dark-grey-text mb-5">Account SignUp</h3>
                     <hr></hr>
                   </div>
-                  <input type="text" class="form-control" id="exampleInputFirstName" aria-describedby="emailHelp" placeholder="First Name"  onChange={this.onFirstNameChange} required/>
+                  <input type="text" class="form-control" id="exampleInputFirstName" aria-describedby="emailHelp" placeholder="User ID"  onChange={this.onUseridChange} required/>
                   <br>
                   </br>
-                  <input type="text" class="form-control" id="exampleInputSecondName" aria-describedby="emailHelp" placeholder="Last Name"  onChange={this.onLastNameChange} required/>
+                  <input type="text" class="form-control" id="exampleInputSecondName" aria-describedby="emailHelp" placeholder="User Type"  onChange={this.onUserTypeChange} required/>
                   <br>
                   </br>
                   <input type="email" class="form-control" id="exampleInputEmail1" aria-describedby="emailHelp" placeholder="Primary email"  onChange={this.onPrimaryEmailChange} required/>
                   <br>
-                  </br>
-                  <input type="text" class="form-control" id="exampleInputusername" placeholder="Username"  onChange={this.onUsernameChange} required/>
-                   <br>
                   </br>
                   <input type="password" class="form-control" id="exampleInputPassword1" placeholder="Password"  onChange={this.onPasswordChange} required/>
                    <br>
@@ -117,8 +111,8 @@ class SignUp extends React.Component {
                     <Button type="button" gradient="blue" className="btn btn-primary btn-lg btn-block" onClick = {this.onSubmitSignIn}>Sign Up</Button>
                       <hr></hr>
                   </div>
-                </CardBody>     
-              </Card>
+                </CardBody>  
+	     </Card>
             </Col>
           </Row>
         </section>

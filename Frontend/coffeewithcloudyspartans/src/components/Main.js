@@ -44,7 +44,9 @@ console.log("STATE IS  " + this.state.user.name);
         <Route exact path="/" render={()=>(<StarterPage value={this.state.user.name} />)} />    
         <Route exact path="/" render={()=>(<DrinksCatalog value={this.state.user.name} />)} />  
         <Route exact path="/login" render={()=>(<Login value={this.state.user.name} />)} />   
-        <Route exact path="/signup" render={()=>(<SignUp value={this.state.user.name} />)} />            
+        <Route exact path="/signup" render={()=>(<SignUp value={this.state.user.name} />)} />  
+        <Route exact path="/addadrink" render={()=>(<AddDrink value={this.state.user.name} />)} /> 
+        <Route path="/drinks" render={()=>(<DrinkDescription value={this.state.user.name} />)} />  
        </div>
   );
 }

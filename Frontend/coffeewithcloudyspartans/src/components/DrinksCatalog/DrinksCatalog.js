@@ -6,7 +6,7 @@ import Navigation from '../StarterPage/Navigation'
 
 class DrinksCatalog extends React.Component {
 
- constructor(props) {
+  constructor(props) {
     super(props);
     this.state = {
       Drinks: []
@@ -19,6 +19,15 @@ class DrinksCatalog extends React.Component {
       currentPage: Number(event.target.id)
     });
   }
+
+  handleClick(key){
+    console.log("KEY IS " +key);
+    localStorage.setItem("activekey" , key)
+    this.setState(
+      {propId:key})
+    console.log(this.state)
+}
+
   componentDidMount() {
     var result = []
     fetch('http://localhost:4004/getalldrinks')

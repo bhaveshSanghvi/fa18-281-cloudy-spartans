@@ -21,7 +21,7 @@ app.use(function(req, res, next) {
 
 var globalStorage = '';
 var error = null;
-
+var FolderName = "";
 const url = "http://54.177.150.212:3001/menu";
 app.get('/getalldrinks',function(req,res){
     const getData = async url => {
@@ -38,50 +38,115 @@ app.get('/getalldrinks',function(req,res){
       getData(url);
 });
 
+const url_2 = "http://54.177.150.212:3001/addadrink";
 
+app.post('/addadrink',function(req,res){
+   console.log("REQ BODY IS", req.body)
+   fetch(url_2, {
+        method: 'post',
+        headers: {'Content-Type': 'application/json'},
+        credentials : 'include',
+        body: JSON.stringify({
+            Name: req.body.Name,
+            Price: 5,
+            Size: req.body.Size,
+            Description: req.body.Description
+    })})
+    .then(response => {
+      if(response.status === 400)
+        {
+          this.setState({errors : true})
+        }
+      else
+        {
+          res.send(200)
+          res.end("Success")
+        }
+      })
+});
+
+const url_3 = "http://54.177.74.65:3000/signup";
+app.post('/signup',function(req,res){
+  console.log("REQ BOIDY", req.body)
+  fetch(url_3, {
+    method: 'post',
+    headers: {'Content-Type': 'application/json'},
+    credentials : 'include',
+    body: JSON.stringify({
+      Userid: req.body.firstname,
+      UserType: req.body.usertype,
+      Password: req.body.password,
+      email : req.body.email
+})})
+.then(response => {
+  if(response.status === 400)
+    {
+      this.setState({errors : true})
+    }
+  else
+    {
+      res.send("Success")
+      res.end("Success")
+    }
+  })
+});
+
+
+app.post('/addfolder',function(req,res){
+  console.log("REQ BODY IS", req.body)
+  FolderName = req.body.FolderName
+  res.end("Folder Created")
+});
+
+var Folder = "";
 var storagePropFiles = multer.diskStorage({
-    destination: function(req, file, callback) {
-      callback(null, createDirectory(Max_ID));
-    },
-    filename: function(req, file, callback) {
-      callback(null, file.originalname);
-    }
-  });
-  
-  var rootDirectory = "Images/";
-  
-  var uploadPropFiles = multer({
-    storage: storagePropFiles
-  });
-  
-  function createDirectory(drinkname) {
-    if (!fs.existsSync(rootDirectory)) {
-      fs.mkdirSync(rootDirectory);
-    }
-    let directory = rootDirectory + drinkname;
-    if (!fs.existsSync(directory)) {
-      fs.mkdirSync(directory);
-    }
-    return directory;
+  destination: function(req, file, callback) {
+  console.log("FOLDER NAME IS ", FolderName);
+    callback(null, createDirectory(FolderName));
+  },
+  filename: function(req, file, callback) {
+   // console.log("req", req.body);
+    callback(null, file.originalname);
   }
-  
-  app.post("/upload-files/", uploadPropFiles.any(), function(req, res, next) {
-  });
-  
+});
+
+var rootDirectory = "Images/";
+
+var uploadPropFiles = multer({
+  storage: storagePropFiles
+});
+
+function createDirectory(FolderName) {
+  if (!fs.existsSync(rootDirectory)) {
+    fs.mkdirSync(rootDirectory);
+  }
+  let directory = rootDirectory + FolderName;
+  if (!fs.existsSync(directory)) {
+    fs.mkdirSync(directory);
+  }
+  return directory;
+}
+
+app.post("/upload-files/", uploadPropFiles.any(), function(req, res, next) {
+});
+
+
+  var rootDirectory = "Images/";
+
   
   app.post("/getDrinkImg", function(req, res, next) {
     console.log("image body for selected img", req.body);
     var filter = ".png";
   
     var startPath =
-      "/Users/local/Desktop/281/TeamProjectBackend/CCSBackEnd/Images/WMC"
+      "/Users/local/Desktop/281/TeamProjectBackend/CCSBackEnd/Images/" + req.body.id
     if (true) {
       var results = [];
       var files = fs.readdirSync(startPath);
     if(files.length) {
         files.forEach(async function(file) {
           fs.readFile(
-            "/Users/local/Desktop/281/TeamProjectBackend/CCSBackEnd/Images/WMC"  +
+            "/Users/local/Desktop/281/TeamProjectBackend/CCSBackEnd/Images/"  + req.body.id + 
               "/" +
               file,
             await function(err, content) {
@@ -103,6 +168,7 @@ var storagePropFiles = multer.diskStorage({
           );
         });
       }}});
+
 
 app.listen(4004, () => {
     console.log("Listening on port 4004")

@@ -23,15 +23,14 @@ class Drinks extends Component {
       photos : []
     }
   }
-
-  componentDidMount()
+componentDidMount()
   {
         fetch('http://localhost:4004/getDrinkImg', {
           method: 'post',
           headers: {'Content-Type': 'application/json'},
           credentials : 'include',
           body : JSON.stringify({
-            id : "WMC"
+            id : this.props.name
           })
         })
         .then(response => response.json())
@@ -51,7 +50,7 @@ class Drinks extends Component {
   }
   render()
   {
-
+	  let redirect_url = "/drinks/drinkdescription/" + this.props.name
     let carousalBlock = this.state.photos.map(function (item, index) {
 
             return (
@@ -67,12 +66,12 @@ class Drinks extends Component {
                     <li data-target="#myCarousel" data-slide-to={index} className={index == 0 ? "active" : ""} key={index}></li>     
             )
         });
-        let redirect_url = null;
+
       return (
         <div class="ownercard3 ownercard-2" >
         <div class="ui divided items">
         <div class="item">
-         <div class="image">
+         <div class="image-card">
             <div id="myCarousel" className="carousel slide" data-ride="carousel">
                               <ul className="carousel-indicators">
                                   {carousalIndicator}
@@ -83,7 +82,7 @@ class Drinks extends Component {
           </div>
           </div>
           <div class="content descrip">
-            {/* <li><Link to={redirect_url} value={this.props.value} onClick={id=>this.props.clicked(this.props.value)} class="header">{this.props.name}</Link></li> */}
+           <li><Link to={redirect_url} value={this.props.name} onClick={id=>this.props.clicked(this.props.name)} class="header">{this.props.name}</Link></li>
             <div class="meta">  
               <span class="cinema"> Name : {this.props.name}</span>
             </div>
