@@ -18,7 +18,6 @@ type CartItem struct {
 
 }
 
-
 type Cart struct {
 
 	UserID      string  		`json:"userid"`
@@ -27,14 +26,12 @@ type Cart struct {
 }
 
 
-type Carts []Cart
-
-type OrderList struct{
-	ProductID 	string			`json:"productid"`
-	InCart		int 			`json:"incart"`
-}
-
 type Keys struct{
 	Keys 		[]string 
+}
+
+type OrderSummary struct{
+	UserID 		string		`json:"userid"`
+	Order_count	int 		`json:"orderCount"`	
 }
 

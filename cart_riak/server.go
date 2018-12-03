@@ -6,20 +6,14 @@ import(
 	"net/http"
 	"io/ioutil"
 	"time"
-	// "os"
 	"strings"
 	"encoding/json"
 	"github.com/codegangsta/negroni"
 	"github.com/gorilla/mux"
 	"github.com/unrolled/render"
-	// "github.com/satori/go.uuid"
 )
 
 var debug = true
-
-// var cart Cart
-// var cartitem CartItem
-// var carts Carts
 
 var riak1 = "http://10.0.1.218:8098"
 var riak2 = "http://10.0.1.53:8098"
@@ -106,7 +100,7 @@ func (c *Client) FetchOrder(bucket string, key string) (int, CartItem){
 	if debug { fmt.Println("[RIAK DEBUG] GET: " + c.Endpoint + "/buckets/"+bucket+"/keys/"+key +" => " + string(respBody)) }
 	var cartitem = CartItem { }
 	if err := json.Unmarshal(respBody, &cartitem); err != nil {
-		fmt.Println("RIAK DEBUG] JSON unmarshaling failed: %s", err)
+		fmt.Println("[RIAK DEBUG] JSON unmarshaling failed: %s", err)
 		return count, nil_cartitem
 	}
 	return cartitem.Count, cartitem
@@ -115,7 +109,6 @@ func (c *Client) FetchOrder(bucket string, key string) (int, CartItem){
 
 func (c *Client) UpdateOrder(bucket string, key string, value string) (CartItem,error){
 
-	//convert to c.Post
 	nil_cartitem := CartItem {}
 	request, _  := http.NewRequest("PUT", c.Endpoint + "/buckets/"+bucket+"/keys/"+key+"?returnbody=true", strings.NewReader(value) )
 	request.Header.Add("Content-Type", "application/json")
@@ -227,10 +220,10 @@ func initRoutes(mx *mux.Router, formatter *render.Render) {
 
 	mx.HandleFunc("/ping", PingHandler(formatter)).Methods("GET")
 	mx.HandleFunc("/cart/{userid}", GetCartUserHandler(formatter)).Methods("GET")
-	mx.HandleFunc("/cart", GetCartHandler(formatter)).Methods("GET")
 	mx.HandleFunc("/cart", CreateOrderHandler(formatter)).Methods("POST")
-	mx.HandleFunc("/cart", UpdateCartHandler(formatter)).Methods("PUT")
+	//mx.HandleFunc("/cart", UpdateCartHandler(formatter)).Methods("PUT")
 	mx.HandleFunc("/cart/{userid}", DeleteCartHandler(formatter)).Methods("DELETE")
+	mx.HandleFunc("/checkout", CheckoutCartHandler(formatter)).Methods("GET")
 }
 
 func PingHandler(formatter *render.Render) http.HandlerFunc {
@@ -243,26 +236,18 @@ func PingHandler(formatter *render.Render) http.HandlerFunc {
 func GetCartUserHandler(formatter *render.Render) http.HandlerFunc {
 	return func(w http.ResponseWriter, req *http.Request) {
 
-		// params := mux.Vars(req)
-		// cart, err := ccs.FindById(params["id"])
-		// if err != nil {
-		// 	respondWithError(w, http.StatusBadRequest, "Drink Doesn't Exist")
-		// 	return
-		// }
-		// respondWithJson(w, http.StatusOK, drink)
-
 		var order_list []CartItem
 		input_params := mux.Vars(req)
 		user_id := input_params["userid"]
 		if user_id == ""{
-			formatter.JSON(w, http.StatusBadRequest, "UserID missing. Please use /cart/<userid>")
+			formatter.JSON(w, http.StatusBadRequest, struct{ Test string }{"UserID missing. Please use /cart/<userid>"})
 		} else {
 			c := NewClient(riak1)
 			keys, err := c.FetchKeys(user_id)
 			fmt.Println(keys)
 			if err != nil {
 				log.Fatal(err)
-				formatter.JSON(w, http.StatusBadRequest, "Cart is empty")
+				formatter.JSON(w, http.StatusBadRequest, struct{ Test string }{"Cart is empty"})
 			} else {
 
 				for i:=0; i<len(keys);i++{
@@ -270,7 +255,6 @@ func GetCartUserHandler(formatter *render.Render) http.HandlerFunc {
 					_,cartitem := c.FetchOrder(user_id, keys[i])
 					order_list = append(order_list,cartitem)
 					fmt.Print("%v",order_list)
-					//formatter.JSON(w, http.StatusOK, cartitem)
 					}
 				formatter.JSON(w, http.StatusOK, order_list)
 			}
@@ -278,18 +262,11 @@ func GetCartUserHandler(formatter *render.Render) http.HandlerFunc {
 	}
 }
 
-func GetCartHandler(formatter *render.Render) http.HandlerFunc {
-	return func(w http.ResponseWriter, req *http.Request) {
-
-	}
-}
 
 func CreateOrderHandler(formatter *render.Render) http.HandlerFunc {
 	return func(w http.ResponseWriter, req *http.Request) {
 
 		var cart_order Cart
-		//var cart_item CartItem
-		//uuid, _ := uuid.NewV4()
 		decoder := json.NewDecoder(req.Body)
 		err := decoder.Decode(&cart_order)
 		
@@ -336,11 +313,73 @@ func CreateOrderHandler(formatter *render.Render) http.HandlerFunc {
 		}
 	}
 }
-func UpdateCartHandler(formatter *render.Render) http.HandlerFunc {
-	return func(w http.ResponseWriter, req *http.Request) {
-	}
-}
+
+// func UpdateCartHandler(formatter *render.Render) http.HandlerFunc {
+// 	return func(w http.ResponseWriter, req *http.Request) {
+// 	}
+// }
+
 func DeleteCartHandler(formatter *render.Render) http.HandlerFunc {
 	return func(w http.ResponseWriter, req *http.Request) {
+
+		input_params := mux.Vars(req)
+		user_id := input_params["userid"]
+		if user_id == ""{
+			formatter.JSON(w, http.StatusBadRequest, struct{ Test string }{"UserID missing. Please use /cart/<userid>"})
+		} else {
+			c := NewClient(riak1)
+			keys, err := c.FetchKeys(user_id)
+			fmt.Println(keys)
+			if err != nil {
+				log.Fatal(err)
+				formatter.JSON(w, http.StatusBadRequest, struct{ Test string }{"Cart is empty"})
+			} else {
+
+				for i:=0; i<len(keys);i++{
+					fmt.Println(len(keys))
+					err:=c.DeleteOrder(user_id, keys[i])
+					if err != nil{
+						log.Fatal(err)
+						formatter.JSON(w, http.StatusInternalServerError, struct{ Test string }{"Unable to delete cart"})
+					}
+				}
+				formatter.JSON(w,http.StatusOK,struct{ Test string }{"Cart is empty"})
+			}
+		}
+
+	}
+}
+
+
+func CheckoutCartHandler(formatter *render.Render) http.HandlerFunc {
+	return func(w http.ResponseWriter, req *http.Request) {
+
+		order_count := 0
+		var order_summary OrderSummary
+		input_params := mux.Vars(req)
+		user_id := input_params["userid"]
+		if user_id == ""{
+			formatter.JSON(w, http.StatusBadRequest, struct{ Test string }{"UserID missing. Please use /checkout/<userid>"})
+		} else {
+			c := NewClient(riak1)
+			keys, err := c.FetchKeys(user_id)
+			fmt.Println(keys)
+			if err != nil {
+				log.Fatal(err)
+				formatter.JSON(w, http.StatusOK, struct{ Test string }{"Cart is empty"})
+			} else {
+
+				for i:=0; i<len(keys);i++{
+					fmt.Println(len(keys))
+					item_count,_ := c.FetchOrder(user_id, keys[i])
+					order_count++
+					fmt.Print("%v",order_count)
+					}
+				order_summary.UserID = user_id
+				order_summary.Order_count = order_count
+				formatter.JSON(w, http.StatusOK, order_summary)
+			}
+		}
+
 	}
 }
