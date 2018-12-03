@@ -11,10 +11,10 @@ type Client struct {
 
 type CartItem struct {
 
-	Name 		string			`json:"name"`
+	Name 	    string	    `json:"name"`
 	Price       int             `json:"price"`
-    Size        string          `json:"size"`
-    Count		int				`json:"count"`
+    	Size        string          `json:"size"`
+    	Count	    int		    `json:"count"`
 
 }
 
@@ -22,7 +22,7 @@ type Cart struct {
 
 	UserID      string  		`json:"userid"`
 	ProductID   string  		`json:"productid"`
-	CartItem 	CartItem		`json:"cartItems"`
+	CartItem    CartItem		`json:"cartItems"`
 }
 
 
