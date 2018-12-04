@@ -11,7 +11,7 @@ import(
 	"github.com/codegangsta/negroni"
 	"github.com/gorilla/mux"
 	"github.com/unrolled/render"
-	//"regexp"
+	"regexp"
 )
 
 var debug = true
@@ -21,8 +21,8 @@ var debug = true
 // var riak3 = "http://10.0.1.90:8098"
 // var riak4 = "http://10.0.3.50:8098"
 // var riak5 = "http://10.0.3.237:8098"
-//var elb_ca = "http://riak-cart-elb-1824905688.us-west-1.elb.amazonaws.com:80"
-var elb = "http://internal-riak-cart-elb-489823230.us-west-1.elb.amazonaws.com:80"
+var elb_ca = "http://internal-riak-cart-elb-489823230.us-west-1.elb.amazonaws.com:80"
+var elb_or = "http://internal-Riak-project-oregon-961584637.us-west-2.elb.amazonaws.com:80"
 
 var tr = &http.Transport{
 	MaxIdleConns:       10,
@@ -173,16 +173,17 @@ func (c *Client) FetchKeys(bucket string) ([]string, error){
 	return key_list.Keys, nil
 }
 
-// func getELB(userid string)(c *Client){
-// 	var validID = regexp.MustCompile(`^[a-n]|^[A-N]`)
-// 	if validID.MatchString(userid){
-// 		c := NewClient(elb_ca) 
-// 	} else {
-// 		c := NewClient(elb_or)
-// 	}
-// 	return c
+func getELB(userid string)(c *Client){
+	var validID = regexp.MustCompile(`^[a-n]|^[A-N]`)
+	if validID.MatchString(userid){
+		c := NewClient(elb_ca)
+		return c 
+	} else {
+		c := NewClient(elb_or)
+		return c
+	}
 
-// }
+}
 
 
 func init(){
@@ -219,16 +220,16 @@ func init(){
 	// 	log.Println("Riak Ping Riak4: ", msg)		
 	// }
 
-	// c5 := NewClient(riak5)
-	// msg, err = c5.Ping()
-	// if err != nil {
-	// 	log.Fatal(err)
-	// } else {
-	// 	log.Println("Riak Ping Riak5: ", msg)		
-	// }
+	 c5 := NewClient(elb_or)
+	 msg, err := c5.Ping()
+	 if err != nil {
+	 	log.Fatal(err)
+	 } else {
+	 	log.Println("Riak Ping Riak5: ", msg)		
+	 }
 
-	c6 := NewClient(elb)
-	msg, err := c6.Ping()
+	c6 := NewClient(elb_ca)
+	msg, err = c6.Ping()
 	if err != nil {
 		log.Fatal(err)
 	} else {
@@ -264,8 +265,8 @@ func GetCartUserHandler(formatter *render.Render) http.HandlerFunc {
 			formatter.JSON(w, http.StatusBadRequest, struct{ Test string }{"UserID missing. Please use /cart/<userid>"})
 		} else {
 			// c := NewClient(riak1)
-			//c := getELB(user_id)
-			c := NewClient(elb)
+			c := getELB(user_id)
+			// c := NewClient(elb)
 			keys, err := c.FetchKeys(user_id)
 			fmt.Println(keys)
 			if err != nil {
@@ -308,8 +309,8 @@ func CreateOrderHandler(formatter *render.Render) http.HandlerFunc {
 		}
 
 		// c := NewClient(riak1)
-		c := NewClient(elb)
-		//c := getELB(cart_order.UserID)
+		// c := NewClient(elb)
+		c := getELB(cart_order.UserID)
 
 		item_count, _ := c.FetchOrder(cart_order.UserID, cart_order.ProductID)
 		if item_count == 0 {
@@ -328,7 +329,7 @@ func CreateOrderHandler(formatter *render.Render) http.HandlerFunc {
 				log.Fatal(err)
 				formatter.JSON(w, http.StatusBadRequest, err)
 			}
-			response, err := c.CreateOrder(cart_order.UserID, cart_order.ProductID, string(reqBody))
+			response, err := c.UpdateOrder(cart_order.UserID, cart_order.ProductID, string(reqBody))
 			if err != nil {
 				log.Fatal(err)
 				formatter.JSON(w, http.StatusBadRequest, err)
@@ -353,8 +354,8 @@ func DeleteCartHandler(formatter *render.Render) http.HandlerFunc {
 			formatter.JSON(w, http.StatusBadRequest, struct{ Test string }{"UserID missing. Please use /cart/<userid>"})
 		} else {
 			// c := NewClient(riak1)
-			c := NewClient(elb)
-			// c := getELB(user_id)
+			// c := NewClient(elb)
+			c := getELB(user_id)
 			keys, err := c.FetchKeys(user_id)
 			fmt.Println(keys)
 			if err != nil {
@@ -389,8 +390,8 @@ func CheckoutCartHandler(formatter *render.Render) http.HandlerFunc {
 			formatter.JSON(w, http.StatusBadRequest, struct{ Test string }{"UserID missing. Please use /checkout/<userid>"})
 		} else {
 			// c := NewClient(riak1)
-			c := NewClient(elb)
-			// c := getELB(user_id)
+			// c := NewClient(elb)
+			c := getELB(user_id)
 			keys, err := c.FetchKeys(user_id)
 			fmt.Println(keys)
 			if err != nil {
@@ -412,5 +413,3 @@ func CheckoutCartHandler(formatter *render.Render) http.HandlerFunc {
 
 	}
 }
-
-
