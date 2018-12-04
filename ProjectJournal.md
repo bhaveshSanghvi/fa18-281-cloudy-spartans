@@ -111,4 +111,32 @@ Following is the response body for the GET request:
 
 On a sucessful payment, a DELETE request will be received by the API from front end to delete all the items in the cart of a particular user.
 
+**Order Processing API - Mongo**
+
+Order processing/Payment API will fetch the details from cart API and based on the count and price of individual item in cart, the total amount of the order will be generated and sent to the front end. If the amount paid by the user is equal to the generated amount by the API, then the corresponding orders will be processed.    
+
+Order Processing module will receive the values from the cart API and these values will be inserted in the 'OrderProcessing' MongoDb collection.    
+For this purpose, a POST request will be made.    
+Following is the POST body to insert into collection    
+
+	{ 
+	  "userid" : "<userid>",
+	  "order_count" : <respective count> 
+	}
+
+
+Furthermore, based on the item count, total amount of the order to be processed will be calculated and stored in MongoDb collection for further processing.    
+A GET request will fetch this amount for a particular user from the database to display it on the 'Payment page' in front end.   
+
+For Payment processing, a POST request will be made with the amount provided by User on the 'Payment page'.    
+
+	{ 
+	  "userid" : "<userid>",
+	  "amount" : <amount paid by user> 
+	}
+
+
+The request body of POST request will be compared against the stored amount for the user in the MongoDb collection.      
+If the both the amounts match, payment will be processed successfully otherwise, a http status 400 is sent to the front end.    
+
 
