@@ -131,3 +131,11 @@ func (m *CCSDB) ConnecttoPrimary() {
         dbprimary = sessionone.DB("CCS")
         }
 }
+
+// Find list of All Drinks in the Catalog
+func (m *CCSDB) FindAll() (map[string] Order, error) {
+	//var order_list []Order
+	var orders map[string]Order
+	err := db.C(COLLECTION).Find(bson.M{}).All(&orders)
+	return orders, err
+}

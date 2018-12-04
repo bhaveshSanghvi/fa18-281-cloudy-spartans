@@ -17,6 +17,17 @@ func testPing(w http.ResponseWriter, req *http.Request) {
 	respondWithJson(w, http.StatusOK, struct{ Test string }{"API version 1.0 alive!"})
 }
 
+//Get all the order status
+func allOrderStatus(w http.ResponseWriter, r *http.Request) {
+	orders, err := ccs.FindAll()
+	if err != nil {
+		respondWithError(w, http.StatusInternalServerError, err.Error())
+		return
+	}
+	fmt.Println("Orders: ", orders)
+	respondWithJson(w, http.StatusOK, orders)
+}
+
 
 func respondWithError(w http.ResponseWriter, code int, msg string) {
 	respondWithJson(w, code, map[string]string{"error": msg})
@@ -37,6 +48,7 @@ func init() {
 func main() {
 	r := mux.NewRouter()
 	r.HandleFunc("/ping", testPing).Methods("GET")
+	r.HandleFunc("/order", allOrderStatus).Methods("GET")
 	if err := http.ListenAndServe(":3001", r); err != nil {
 		log.Fatal(err)
 	}
