@@ -72,6 +72,43 @@ Following is the POST body for Login request received from front end login page:
 	"Password": "<password>"
 }
 ```
+**Cart API - Riak**
 
+The Cart module will add multiple orders to the cart, display the items in cart and provide order details for payment processing to Order Processing API.
+Once the payment processing is done, the cart will be emptied for the user. Each individual user has their own Bucket in Riak Db with keys as 'product-id' of each unique item and value as product details and the count of the respective items in the cart.
+
+A POST request will be made to create an order. 
+First we check if the user has already created an order for the same product or not.
+If the order was already created for the same product, then the item count is incremented by 1.
+If not, a new key will be generated with count initialized as 1.
+Following is the POST body for creating a new order:
+
+	{
+	 "userid" : "<user id>",
+	 "productid" : "<product id>",
+	 "cartItems" : {
+		"name" : "<product name>",
+		"price" : <product price>,
+		"size" : "<product size>",
+		"count" : 1
+	 }
+	}
+
+
+A GET request will be made to retrieve all the items in the cart for a particular user.
+If the user has not added any item to the Cart, then an empty cart will be displayed.
+Else, we loop through all the keys of a particular user, and the value will be sent to the front end.
+
+A GET request will be made to retrieve the count of items in the cart, when a 'checkout' operation is performed.
+If the cart is empty, then a http status 400 is sent to the front end.
+Otherwise, the userid and the respective total item count will be sent to the front end.
+Following is the response body for the GET request:
+
+	{ 
+	  "userid" : "<userid>",
+	  "order_count" : <respective count> 
+	}
+
+On a sucessful payment, a DELETE request will be received by the API from front end to delete all the items in the cart of a particular user.
 
 
