@@ -43,5 +43,35 @@
 - Test Scenario 6: Authorising an admin user from Login API to FrontEnd application for adding/editing an item in the catalog.
 
 
+## Week-3 (24-Nov-2018 - 30-Nov-2018)
+
+**Signup/Login API - Riak**  
+SignUp/Login API deals with creating a new user, authenticating and authorizing the users based on their UserType.
+
+The SignUp module of the API will add a user in bucket 'Users' with key as 'UserId' and value as other User details. A user can be an admin user or a guest user. Only admin user can add/delete items from catalog.
+The Login module of the API authenticates the user based on the UserId and Password provided, and also authorizes based on the respective UserType in database.
+
+A POST request will made for a user to sign up.  
+Following is the POST body from front end SignUp page:  
+```
+{
+	"Userid":"<unique id>",
+	"email": "<email-id>",
+	"UserType": "<admin/user>",
+	"Password": "<password>"
+}
+```
+
+A POST request will be made to take in the details provided while login.  
+An internal GET request to the Riak database will fetch the corresponding UserId.  
+Request body(UserId and password) of the POST request will be compared with the corresponding value of the User fetched from the Riak db for a successful login.  
+Following is the POST body for Login request received from front end login page:  
+```
+{
+	"Userid":"<userid>",
+	"Password": "<password>"
+}
+```
+
 
 
