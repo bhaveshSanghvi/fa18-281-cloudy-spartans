@@ -72,6 +72,68 @@ Following is the POST body for Login request received from front end login page:
 	"Password": "<password>"
 }
 ```
+
+**Catalog and Admin API - Mongo**
+
+This particular module deals with the Catalog of the CCS, display of all the drinks with their description. This module also deals with Admin functionalities like Add a new drink to the catalog, Delete a drink from the catalog, Edit drink information in the catalog.
+
+When the user enters his account, he can view the catalog of the store and can add a drink/drinks to the cart. The User can view information about a particular drink and checkout the necessary.
+
+If a particular user is ADMIN, he can perform CRUD operations on the catalog.
+
+Routes : 
+
+		
+	CREATE - "POST" : "/addadrink" 
+	READ   - "GET" : "/menu" , "GET" : "/drink/{id}"
+	UPDATE - "PUT" : "/updatedrink"
+	DELETE - "DELETE" : "/delete"
+
+	
+<b> /menu </b> :
+
+To fetch the whole catalog from the Database. Displays the drink with Name, Price, Size and Description.
+
+Example : 
+```
+```
+ 
+<b> /drink/{id} </b> : 
+
+To fetch a particular drink based on the id (bson object).
+
+Example : 
+```
+```
+
+<b> /addaadrink </b> : 
+
+To Add a new drink to the catalog.
+Reqires Admin Authentication, Name, Price, Size and Photo of the drink.
+
+Example : 
+```
+```
+
+<b> /delete </b>
+
+To Delete a drink from the catalog.
+Requires Admin Authentication and id of the drink.
+
+Example : 
+```
+```
+
+<b> /updatedrink </b>
+
+To update the features of the drink.
+Requires Admin Authentication and new json object needs to be posted to modify the information.
+
+Example : 
+```
+```
+
+
 **Cart API - Riak**
 
 The Cart module will add multiple orders to the cart, display the items in cart and provide order details for payment processing to Order Processing API.
