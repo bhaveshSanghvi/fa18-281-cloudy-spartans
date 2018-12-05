@@ -17,6 +17,24 @@ func testPing(w http.ResponseWriter, req *http.Request) {
 	respondWithJson(w, http.StatusOK, struct{ Test string }{"API version 1.0 alive!"})
 }
 
+//Insert into Database
+func generateAmount(w http.ResponseWriter, r *http.Request) {
+	defer r.Body.Close()
+
+	var order Order
+	if err := json.NewDecoder(r.Body).Decode(&order); err != nil {
+		respondWithError(w, http.StatusBadRequest, "Invalid request payload")
+		return
+	}
+	order.ID = bson.NewObjectId()
+	order.GeneratedAmount = order.OrderCount*5
+	if err := ccs.Insert(order); err != nil {
+		respondWithError(w, http.StatusInternalServerError, err.Error())
+		return
+	}
+	respondWithJson(w, http.StatusCreated, order)
+}
+
 //Get all the order status
 func allOrderStatus(w http.ResponseWriter, r *http.Request) {
 	orders, err := ccs.FindAll()
@@ -48,6 +66,7 @@ func init() {
 func main() {
 	r := mux.NewRouter()
 	r.HandleFunc("/ping", testPing).Methods("GET")
+	r.HandleFunc("/amount", generateAmount).Methods("POST")
 	r.HandleFunc("/order", allOrderStatus).Methods("GET")
 	if err := http.ListenAndServe(":3001", r); err != nil {
 		log.Fatal(err)
