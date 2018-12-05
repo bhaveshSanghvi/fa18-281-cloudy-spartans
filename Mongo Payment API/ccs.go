@@ -27,16 +27,16 @@ const (
 	AuthDatabase = "admin"
 	AuthUserName = "admin"
 	AuthPassword = "cmpe281"
-	Server1 = "10.0.1.123"
-	Server2 = "10.0.1.115"
-	Server3 = "10.0.1.54"
-	Server4 = "10.0.3.168"
-	Server5 = "10.0.3.254"
+	MongoServer1 = "10.0.1.123"
+	MongoServer2 = "10.0.1.115"
+	MongoServer3 = "10.0.1.54"
+	MongoServer4 = "10.0.3.168"
+	MongoServer5 = "10.0.3.254"
 )
 
 //Initiate connection to database
 func (m *CCSDB) Connect() {
-	fmt.Printf("Came Here in connect1")
+	fmt.Printf("In Connect1")
 	mongoDBDialInfo := &mgo.DialInfo{
         Addrs:    []string{MongoDBHosts},
         Database: AuthDatabase,
@@ -45,10 +45,10 @@ func (m *CCSDB) Connect() {
     }
     session, err := mgo.DialWithInfo(mongoDBDialInfo)
 	if err != nil {
-        fmt.Printf("Came Here in connect error")
+        fmt.Printf("In Connect Error1")
 		log.Fatal(err)
     }
-	db = session.DB("CCS")
+	db = session.DB("testing")
 }
 
 // Make sure the write happens to Master of the Mongo Database
@@ -60,10 +60,10 @@ func (m *CCSDB) ConnecttoPrimary() {
                 log.Fatal(err)
         }
 	value := result["primary"].(string)
-	if s.Contains(value,"primary"){
-		fmt.Printf("Yes Primary")
+	if s.Contains(value,"Primary"){
+		fmt.Printf("In Primary")
             mongoDBDialInfo := &mgo.DialInfo{
-                Addrs:    []string{Server1},
+                Addrs:    []string{MongoServer1},
                 Database: AuthDatabase,
                 Username: AuthUserName,
                 Password: AuthPassword,
@@ -72,12 +72,12 @@ func (m *CCSDB) ConnecttoPrimary() {
         if err != nil {
                 log.Fatal(err)
         }
-        dbprimary = sessionone.DB("CCS")
+        dbprimary = sessionone.DB("testing")
 	}
-	if s.Contains(value,"secondary1"){
-                fmt.Printf("Yes Secondary1")
+	if s.Contains(value,"Secondary1"){
+                fmt.Printf("In Secondary1")
             mongoDBDialInfo := &mgo.DialInfo{
-                Addrs:    []string{Server2},
+                Addrs:    []string{MongoServer2},
                 Database: AuthDatabase,
                 Username: AuthUserName,
                 Password: AuthPassword,
@@ -86,12 +86,12 @@ func (m *CCSDB) ConnecttoPrimary() {
         if err != nil {
                 log.Fatal(err)
         }
-        dbprimary = sessionone.DB("CCS")
+        dbprimary = sessionone.DB("testing")
         }
-	if s.Contains(value,"secondary2"){
-                fmt.Printf("Yes Secondary2")
+	if s.Contains(value,"Secondary2"){
+                fmt.Printf("In Secondary2")
 		  mongoDBDialInfo := &mgo.DialInfo{
-                Addrs:    []string{Server3},
+                Addrs:    []string{MongoServer3},
                 Database: AuthDatabase,
                 Username: AuthUserName,
                 Password: AuthPassword,
@@ -100,12 +100,12 @@ func (m *CCSDB) ConnecttoPrimary() {
         if err != nil {
                 log.Fatal(err)
         }
-        dbprimary = sessionone.DB("CCS")
+        dbprimary = sessionone.DB("testing")
         }
-	if s.Contains(value,"secondary3"){
-                fmt.Printf("Yes Secondary3")
+	if s.Contains(value,"Secondary3"){
+                fmt.Printf("In Secondary3")
 		  mongoDBDialInfo := &mgo.DialInfo{
-                Addrs:    []string{Server4},
+                Addrs:    []string{MongoServer4},
                 Database: AuthDatabase,
                 Username: AuthUserName,
                 Password: AuthPassword,
@@ -114,12 +114,12 @@ func (m *CCSDB) ConnecttoPrimary() {
         if err != nil {
                 log.Fatal(err)
         }
-        dbprimary = sessionone.DB("CCS")
+        dbprimary = sessionone.DB("testing")
         }
-	if s.Contains(value,"secondary4"){
-                fmt.Printf("Yes Secondary4")
+	if s.Contains(value,"Secondary4"){
+                fmt.Printf("In Secondary4")
 		  mongoDBDialInfo := &mgo.DialInfo{
-                Addrs:    []string{Server5},
+                Addrs:    []string{MongoServer5},
                 Database: AuthDatabase,
                 Username: AuthUserName,
                 Password: AuthPassword,
@@ -128,14 +128,21 @@ func (m *CCSDB) ConnecttoPrimary() {
         if err != nil {
                 log.Fatal(err)
         }
-        dbprimary = sessionone.DB("CCS")
+        dbprimary = sessionone.DB("testing")
         }
 }
 
 // Find list of All Drinks in the Catalog
-func (m *CCSDB) FindAll() (map[string] Order, error) {
+func (m *CCSDB) FindAll() ([]Order, error) {
 	//var order_list []Order
-	var orders map[string]Order
+	var orders []Order
 	err := db.C(COLLECTION).Find(bson.M{}).All(&orders)
 	return orders, err
 }
+
+func (m *CCSDB) Insert(order Order) error {
+	err := dbprimary.C(COLLECTION).Insert(&order)
+	//insert generatedamount = ordercount*5
+	return err
+}
+
