@@ -216,3 +216,8 @@ If the both the amounts match, payment will be processed successfully otherwise,
 
 ![Alt text](API-Mongo/MongoDiagram.png?raw=true "MongoDB Architecture")
 
+**3. Cart API Architecture **
+
+![Cart API Architecture](CartAPI_diagram.png)
+
+
