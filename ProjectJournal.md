@@ -202,3 +202,11 @@ The request body of POST request will be compared against the stored amount for 
 If the both the amounts match, payment will be processed successfully otherwise, a http status 400 is sent to the front end.    
 
 
+## Week-4 (01-Dec-2018 - 07-Dec-2018)
+
+### Architecture diagrams:
+
+**1. Signup/Login API architecture**
+
+![Signup/Login API Architecture](SignUp_Login_architecture.png)
+
