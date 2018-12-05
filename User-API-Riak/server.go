@@ -19,11 +19,7 @@ import (
 )
 
 var debug = true
-var riak_node1 = "http://10.0.1.182:8098"
-var riak_node2 = "http://10.0.1.151:8098"
-var riak_node3 = "http://10.0.1.153:8098"
-var riak_node4 = "http://172.16.1.247:8098"
-var riak_node5 = "http://172.16.1.119:8098"
+var cluster1_elb = "http://internal-Cluster1-ELB-1830172783.us-west-1.elb.amazonaws.com:80"
 
 type Client struct {
 	Endpoint string
@@ -60,46 +56,54 @@ func NewServer() *negroni.Negroni {
 func init() {
 
 	// Riak KV Setup	
-	c1 := NewClient(riak_node1)
-	msg, err := c1.Ping( )
-	if err != nil {
-		log.Fatal(err)
-	} else {
-		log.Println("Riak Ping Server1: ", msg)		
-	}
+	// c1 := NewClient(riak_node1)
+	// msg, err := c1.Ping( )
+	// if err != nil {
+	// 	log.Fatal(err)
+	// } else {
+	// 	log.Println("Riak Ping Server1: ", msg)		
+	// }
 	
 
-	c2 := NewClient(riak_node2)
-	msg, err = c2.Ping( )
-	if err != nil {
-		log.Fatal(err)
-	} else {
-		log.Println("Riak Ping Server2: ", msg)		
-	}
+	// c2 := NewClient(riak_node2)
+	// msg, err = c2.Ping( )
+	// if err != nil {
+	// 	log.Fatal(err)
+	// } else {
+	// 	log.Println("Riak Ping Server2: ", msg)		
+	// }
 
-	c3 := NewClient(riak_node3)
-	msg, err = c3.Ping( )
-	if err != nil {
-		log.Fatal(err)
-	} else {
-		log.Println("Riak Ping Server3: ", msg)		
-	}
+	// c3 := NewClient(riak_node3)
+	// msg, err = c3.Ping( )
+	// if err != nil {
+	// 	log.Fatal(err)
+	// } else {
+	// 	log.Println("Riak Ping Server3: ", msg)		
+	// }
 	
 
-	c4 := NewClient(riak_node4)
-	msg, err = c4.Ping( )
+	// c4 := NewClient(riak_node4)
+	// msg, err = c4.Ping( )
+	// if err != nil {
+	// 	log.Fatal(err)
+	// } else {
+	// 	log.Println("Riak Ping Server4: ", msg)		
+	// }
+
+	// c5 := NewClient(riak_node5)
+	// msg, err = c5.Ping( )
+	// if err != nil {
+	// 	log.Fatal(err)
+	// } else {
+	// 	log.Println("Riak Ping Server5: ", msg)		
+	// }
+
+	elb1 := NewClient(cluster1_elb)
+	msg, err := elb1.Ping( )
 	if err != nil {
 		log.Fatal(err)
 	} else {
 		log.Println("Riak Ping Server4: ", msg)		
-	}
-
-	c5 := NewClient(riak_node5)
-	msg, err = c5.Ping( )
-	if err != nil {
-		log.Fatal(err)
-	} else {
-		log.Println("Riak Ping Server5: ", msg)		
 	}
 	
 }
@@ -112,9 +116,12 @@ func (c *Client) Ping() (string, error) {
 	}
 	defer resp.Body.Close()
 	body, err := ioutil.ReadAll(resp.Body)
-	if debug { fmt.Println("[RIAK DEBUG] GET: " + c.Endpoint  + "/ping => " + string(body)) }
+	if debug { 
+		fmt.Println("[RIAK DEBUG] GET: " + c.Endpoint + "/ping => " + string(body)) 
+	}
 	return string(body), nil
 }
+
 
 // API Routes
 func initRoutes(mx *mux.Router, formatter *render.Render) {
@@ -145,7 +152,7 @@ func signupHandler(formatter *render.Render) http.HandlerFunc {
 
 		requestbody, _ := json.Marshal(ord)
 
-		c1 := NewClient(riak_node1)
+		elb1 := NewClient(cluster1_elb)
 
 		chk_user, _ := c1.GetUser(ord.UserId)
 
@@ -179,7 +186,7 @@ func loginHandler(formatter *render.Render) http.HandlerFunc {
 			return 
 		}
 
-		c1 := NewClient(riak_node1)
+		elb1 := NewClient(cluster1_elb)
 
 		user_details, error := c1.GetUser(ord.UserId)
 
@@ -202,8 +209,8 @@ func loginHandler(formatter *render.Render) http.HandlerFunc {
 
 func allusersHandler(formatter *render.Render) http.HandlerFunc {
 	return func(w http.ResponseWriter, req *http.Request) {
-		c1 := NewClient(riak_node1)
-		list_users, error := c1.GetAllUsers()
+		elb1 := NewClient(cluster1_elb)
+		list_users, error := elb1.GetAllUsers()
 
 		if error != nil {
 			log.Fatal(error)
