@@ -210,3 +210,6 @@ If the both the amounts match, payment will be processed successfully otherwise,
 
 ![Signup/Login API Architecture](SignUp_Login_architecture.png)
 
+
+![Alt text](API-Mongo/MongoDiagram.png?raw=true "MongoDB Architecture")
+
