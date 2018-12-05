@@ -14,7 +14,7 @@
 ### Challenges/Issues faced :
   - Need more research about the integration of individual microservices across multiple VPC's
   - Need to figure out the combination of databases
-  
+***
  ## Week-2 (17-Nov-2018 - 23-Nov-2018)
 
 **Divided the application into four Microservices each to be developed by individual team member as follows:**    
@@ -42,7 +42,7 @@
 - Test Scenario 5: Communication between the FrontEnd and SignUp to Create/Validate a User.
 - Test Scenario 6: Authorising an admin user from Login API to FrontEnd application for adding/editing an item in the catalog.
 
-
+***
 ## Week-3 (24-Nov-2018 - 30-Nov-2018)
 
 **Signup/Login API - Riak**  
@@ -201,7 +201,7 @@ For Payment processing, a POST request will be made with the amount provided by 
 The request body of POST request will be compared against the stored amount for the user in the MongoDb collection.      
 If the both the amounts match, payment will be processed successfully otherwise, a http status 400 is sent to the front end.    
 
-
+***
 ## Week-4 (01-Dec-2018 - 07-Dec-2018)
 
 ### Architecture diagrams:
@@ -210,9 +210,7 @@ If the both the amounts match, payment will be processed successfully otherwise,
 
 ![Signup/Login API Architecture](SignUp_Login_architecture.png)
 
-
 **2. Catalog/Admin API-DB architecture**
-
 
 ![Alt text](API-Mongo/MongoDiagram.png?raw=true "MongoDB Architecture")
 
@@ -220,4 +218,7 @@ If the both the amounts match, payment will be processed successfully otherwise,
 
 ![Cart API Architecture](CartAPI_diagram.png)
 
+**4. Order Processing/Payment API Architecture**    
+
+![Order Processing/Payment API Architecture](Payment_API.png)
 
