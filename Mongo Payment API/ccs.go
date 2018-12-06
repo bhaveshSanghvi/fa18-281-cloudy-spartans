@@ -140,6 +140,15 @@ func (m *CCSDB) FindAll() ([]Order, error) {
 	return orders, err
 }
 
+//Find List
+func (m *CCSDB) FindByUserId(id string) (Order, error) {
+        var order Order
+        fmt.Printf(id)
+        err := db.C(COLLECTION).Find(bson.M{ "name" : id}).One(&order)
+	fmt.Printf("%v",order)
+	return order, err
+}
+
 func (m *CCSDB) Insert(order Order) error {
 	err := dbprimary.C(COLLECTION).Insert(&order)
 	//insert generatedamount = ordercount*5
