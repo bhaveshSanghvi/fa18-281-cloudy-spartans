@@ -70,4 +70,18 @@
    - Discussed on Mongo Session issues
    - Discussed on data flow
    - Reviewed the API codes committed till now.
+
+
+## Meeting - 7
+<b>Date</b>      : 03-December-2018   
+<b>Time</b>      : 11:00PM - 1:00AM    
+<b>Place</b>     : Zoom (Online)  
+<b>Attendees</b> : All team members
+<b>Discussion Summary</b> :
+ 
+   - Reviewed implementation of ELB on top of sharded Riak Clusters for SignUp and Cart API.
+   - Reviewed individual microservice architecture
+   - Discussed on Containerization of individual GO APIs.
+   - Reviewed X, Y, Z axis of AFK cube for our application. 
+   - Reviewed on integration of front-end Signup/Login and Catalog modules with respective APIs.
  
