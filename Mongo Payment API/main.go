@@ -46,6 +46,31 @@ func allOrderStatus(w http.ResponseWriter, r *http.Request) {
 	respondWithJson(w, http.StatusOK, orders)
 }
 
+func processOrders(w http.ResponseWriter, r *http.Request) {
+	var order Order
+	var payment Payment
+	//params := mux.Vars(r)
+	decoder := json.NewDecoder(r.Body)
+	err := decoder.Decode(&payment)
+	if err != nil {
+		respondWithError(w, http.StatusBadRequest, "Error11")
+		return
+	}
+
+	order, err1 := ccs.FindByUserId(payment.UserId)
+	if err1 != nil {
+		respondWithError(w, http.StatusBadRequest, "Error12")
+		return
+	} else {
+		if (payment.EnterAmount == order.GeneratedAmount){
+			respondWithJson(w, http.StatusOK, "Order Processed")
+			return
+		} else {
+			respondWithError(w, http.StatusBadRequest, "Error13")
+			return	
+		}
+	}
+}
 
 func respondWithError(w http.ResponseWriter, code int, msg string) {
 	respondWithJson(w, code, map[string]string{"error": msg})
@@ -68,6 +93,7 @@ func main() {
 	r.HandleFunc("/ping", testPing).Methods("GET")
 	r.HandleFunc("/amount", generateAmount).Methods("POST")
 	r.HandleFunc("/order", allOrderStatus).Methods("GET")
+	r.HandleFunc("/orders", processOrders).Methods("POST")
 	if err := http.ListenAndServe(":3001", r); err != nil {
 		log.Fatal(err)
 	}
