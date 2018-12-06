@@ -9,6 +9,8 @@ type Order struct {
 	GeneratedAmount int           `bson:"amount" json:"amount"`
 }
 
-//var orders map[string] Order
+type Payment struct {
+	UserId          string 	`bson:"name" json:"name"`
+	EnterAmount  	int 	`bson:"userAmount" json:"userAmount"`
+}
 
-//type orders1 []Order
