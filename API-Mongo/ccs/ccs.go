@@ -24,7 +24,7 @@ const (
 )
 
 const (
-	MongoDBHosts = "internal-Mongo-Loadbalancer-1320543684.us-west-1.elb.amazonaws.com:27017"
+	MongoDBHosts = "internal-Mongo-Loadbalancer-1320543684.us-west-1.elb.amazonaws.com:80"
 	AuthDatabase = "admin"
 	AuthUserName = "admin"
 	AuthPassword = "admin"
@@ -35,6 +35,9 @@ const (
 	Server5 = "10.0.1.253"
 )
 
+var mgoSession   *mgo.Session
+// Creates a new session if mgoSession is nil i.e there is no active mongo session.
+//If there is an active mongo session it will return a Clone
 //Initiate connection to database
 func (m *CCSDB) Connect() {
 	mongoDBDialInfo := &mgo.DialInfo{
@@ -48,7 +51,25 @@ func (m *CCSDB) Connect() {
 		log.Fatal(err)
 	}
 	db = session.DB("CCS")
+
 }
+
+func GetMongoSession() *mgo.Session {
+        mongoDBDialInfo := &mgo.DialInfo{
+                Addrs:    []string{MongoDBHosts},
+                Database: AuthDatabase,
+                Username: AuthUserName,
+                Password: AuthPassword,
+        }
+        if mgoSession == nil {
+            var err error
+            mgoSession, err = mgo.DialWithInfo(mongoDBDialInfo)
+            if err != nil {
+                log.Fatal("Failed to start the Mongo session")
+            }
+        }
+        return mgoSession.Clone()
+ }
 
 // Make sure the write happens to Master of the Mongo Database
 func (m *CCSDB) ConnecttoPrimary() {
@@ -130,34 +151,50 @@ func (m *CCSDB) ConnecttoPrimary() {
         dbprimary = sessionone.DB("CCS")
         }
 }
+
 // Find list of All Drinks in the Catalog
 func (m *CCSDB) FindAll() ([]Drink, error) {
+	session := GetMongoSession()
+	db = session.DB("CCS")
 	var drinks []Drink
-	err := db.C(COLLECTION).Find(bson.M{}).All(&drinks)
-	return drinks, err
+	errone := db.C(COLLECTION).Find(bson.M{}).All(&drinks)
+	defer session.Close()
+	return drinks, errone
 }
 
 // Find a Drink by its id
 func (m *CCSDB) FindById(id string) (Drink, error) {
+	session := GetMongoSession()
+	db = session.DB("CCS")
 	var drink Drink
 	err := db.C(COLLECTION).FindId(bson.ObjectIdHex(id)).One(&drink)
+	defer session.Close()
 	return drink, err
 }
 
 // Insert a New Drink into CCS Menu
 func (m *CCSDB) Insert(drink Drink) error {
+	session := GetMongoSession()
+	db = session.DB("CCS")
 	err := dbprimary.C(COLLECTION).Insert(&drink)
+	defer session.Close()
 	return err
 }
 
 // Delete a Drink from the Catalog
 func (m *CCSDB) Delete(drink Drink) error {
+	session := GetMongoSession()
+	db = session.DB("CCS")
 	err := db.C(COLLECTION).Remove(&drink)
+	defer session.Close()
 	return err
 }
 
 // Update an existing Drink in the Catalog
 func (m *CCSDB) Update(drink Drink) error {
+	session := GetMongoSession()
+	db = session.DB("CCS")
 	err := db.C(COLLECTION).UpdateId(drink.ID, &drink)
+	defer session.Close()
 	return err
 }
