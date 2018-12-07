@@ -322,7 +322,8 @@ func CreateOrderHandler(formatter *render.Render) http.HandlerFunc {
 				formatter.JSON(w, http.StatusOK, response)
 			}
 		} else {
-			cart_item.Count = item_count + 1
+			//cart_item.Count = item_count + 1
+			cart_item.Count = item_count + cart_item.Count
 			reqBody, err := json.Marshal(cart_item)
 
 			if err != nil {
