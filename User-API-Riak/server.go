@@ -256,16 +256,7 @@ func (c *Client) GetAllUsers() ([]string, error) {
 	fmt.Println("Keys are",all_keys_list.Keys)
 	return all_keys_list.Keys, nil
 	
-	// var output user
-	//  msg := json.Unmarshal(body, &output); 
-	//  fmt.Println("output", output)
-
-	// if msg != nil {
-	// 	fmt.Println("[RIAK DEBUG] JSON unmarshaling failed: %s", msg)
-	// 	return ord_nil, msg
-	// }	
-	// fmt.Println("ord is",output)
-	// return msg, nil
+	
 }
 
 func ErrorWithJSON(w http.ResponseWriter, message string, code int) {
