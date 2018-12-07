@@ -10,6 +10,7 @@ const fetch = require("node-fetch");
 const request = require("request");
 app.use(bodyParser.json());
 let fs = require("fs");
+var axios =require('axios');
 app.use(function(req, res, next) {
     res.setHeader('Access-Control-Allow-Origin', 'http://localhost:3000');
     res.setHeader('Access-Control-Allow-Credentials', 'true');
@@ -169,6 +170,35 @@ app.post("/upload-files/", uploadPropFiles.any(), function(req, res, next) {
         });
       }}});
 
+app.get('/cart/:id',function(req,res){
+  const url5="http://52.8.43.95:3000/cart/"+ req.params.id;
+  console.log("url is ",url5)
+  console.log("userid", req.params.id);
+
+  axios.get(url5).then(response=>
+      {
+          console.log("response is ", response.data)
+          res.status(200).send(response.data);
+      })
+
+//   fetch(url5, {
+//     method: 'GET',
+//     headers: {'Content-Type': 'application/json'}
+//    // credentials : 'include',
+//    })
+// .then(response => {
+//   if(true)
+//     {
+//       console.log("response cart",response)
+//       //this.setState({errors : true})
+//     }
+//   else
+//     {
+//       res.send("Success")
+//       res.end("Success")
+//     }
+//   })
+  });
 
 app.listen(4004, () => {
     console.log("Listening on port 4004")
