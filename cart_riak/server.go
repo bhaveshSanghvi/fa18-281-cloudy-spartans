@@ -243,7 +243,7 @@ func initRoutes(mx *mux.Router, formatter *render.Render) {
 	mx.HandleFunc("/ping", PingHandler(formatter)).Methods("GET")
 	mx.HandleFunc("/cart/{userid}", GetCartUserHandler(formatter)).Methods("GET")
 	mx.HandleFunc("/cart", CreateOrderHandler(formatter)).Methods("POST")
-	//mx.HandleFunc("/cart", UpdateCartHandler(formatter)).Methods("PUT")
+	mx.HandleFunc("/cart", UpdateCartHandler(formatter)).Methods("PUT")
 	mx.HandleFunc("/cart/{userid}", DeleteCartHandler(formatter)).Methods("DELETE")
 	mx.HandleFunc("/checkout", CheckoutCartHandler(formatter)).Methods("GET")
 }
@@ -341,10 +341,49 @@ func CreateOrderHandler(formatter *render.Render) http.HandlerFunc {
 	}
 }
 
-// func UpdateCartHandler(formatter *render.Render) http.HandlerFunc {
-// 	return func(w http.ResponseWriter, req *http.Request) {
-// 	}
-// }
+func UpdateCartHandler(formatter *render.Render) http.HandlerFunc {
+	return func(w http.ResponseWriter, req *http.Request) {
+		var cart_order Cart
+                decoder := json.NewDecoder(req.Body)
+                err := decoder.Decode(&cart_order)
+
+                if err != nil {
+                        log.Fatal(err)
+                        formatter.JSON(w, http.StatusBadRequest, err)
+                }
+
+                cart_item := cart_order.CartItem
+
+                //reqBody, err := json.Marshal(cart_item)
+
+                //if err != nil {
+                //      log.Fatal(err)
+                //      formatter.JSON(w, http.StatusBadRequest, err)
+                //}
+
+                c := getELB(cart_order.UserID)
+
+                item_count, _ := c.FetchOrder(cart_order.UserID, cart_order.ProductID)
+                if item_count == 0 {
+                                formatter.JSON(w, http.StatusBadRequest, struct{ Test string }{"Decrement not allowed"})
+                } else {
+                        cart_item.Count = item_count - 1
+                        reqBody, err := json.Marshal(cart_item)
+
+                        if err != nil {
+                                log.Fatal(err)
+                                formatter.JSON(w, http.StatusBadRequest, err)
+                        }
+                        response, err := c.UpdateOrder(cart_order.UserID, cart_order.ProductID, string(reqBody))
+                        if err != nil {
+                                log.Fatal(err)
+                                formatter.JSON(w, http.StatusBadRequest, err)
+                        } else {
+                                formatter.JSON(w, http.StatusOK, response)
+                        }
+                }
+	}
+}
 
 func DeleteCartHandler(formatter *render.Render) http.HandlerFunc {
 	return func(w http.ResponseWriter, req *http.Request) {
