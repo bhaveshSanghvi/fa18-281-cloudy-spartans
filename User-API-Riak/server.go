@@ -56,47 +56,6 @@ func NewServer() *negroni.Negroni {
 func init() {
 
 	// Riak KV Setup	
-	// c1 := NewClient(riak_node1)
-	// msg, err := c1.Ping( )
-	// if err != nil {
-	// 	log.Fatal(err)
-	// } else {
-	// 	log.Println("Riak Ping Server1: ", msg)		
-	// }
-	
-
-	// c2 := NewClient(riak_node2)
-	// msg, err = c2.Ping( )
-	// if err != nil {
-	// 	log.Fatal(err)
-	// } else {
-	// 	log.Println("Riak Ping Server2: ", msg)		
-	// }
-
-	// c3 := NewClient(riak_node3)
-	// msg, err = c3.Ping( )
-	// if err != nil {
-	// 	log.Fatal(err)
-	// } else {
-	// 	log.Println("Riak Ping Server3: ", msg)		
-	// }
-	
-
-	// c4 := NewClient(riak_node4)
-	// msg, err = c4.Ping( )
-	// if err != nil {
-	// 	log.Fatal(err)
-	// } else {
-	// 	log.Println("Riak Ping Server4: ", msg)		
-	// }
-
-	// c5 := NewClient(riak_node5)
-	// msg, err = c5.Ping( )
-	// if err != nil {
-	// 	log.Fatal(err)
-	// } else {
-	// 	log.Println("Riak Ping Server5: ", msg)		
-	// }
 
 	elb1 := NewClient(cluster1_elb)
 	msg, err := elb1.Ping( )
