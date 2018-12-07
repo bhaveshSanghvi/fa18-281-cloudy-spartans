@@ -15,11 +15,13 @@ import (
 	"io/ioutil"
 	"time"
 	"strings"
+	"regexp"
 	// "strconv"
 )
 
 var debug = true
 var cluster1_elb = "http://internal-Cluster1-ELB-1830172783.us-west-1.elb.amazonaws.com:80"
+var cluster2_elb = "http://internal-Test-ELB-1557580805.us-west-2.elb.amazonaws.com:80"
 
 type Client struct {
 	Endpoint string
@@ -53,16 +55,36 @@ func NewServer() *negroni.Negroni {
 	return n
 }
 
+func getELB(UserId string)(c *Client){
+	var validID = regexp.MustCompile(`^[a-n]|^[A-N]`)
+	if validID.MatchString(UserId){
+		c := NewClient(cluster1_elb)
+		return c 
+	} else {
+		c := NewClient(cluster2_elb)
+		return c
+	}
+
+}
+
 func init() {
 
 	// Riak KV Setup	
 
-	elb1 := NewClient(cluster1_elb)
-	msg, err := elb1.Ping( )
+	elb2 := NewClient(cluster2_elb)
+	msg, err := elb2.Ping( )
 	if err != nil {
 		log.Fatal(err)
 	} else {
 		log.Println("Riak Ping Server4: ", msg)		
+	}
+
+	elb1 := NewClient(cluster1_elb)
+	msg, err = elb1.Ping( )
+	if err != nil {
+		log.Fatal(err)
+	} else {
+		log.Println("Riak Ping Server5: ", msg)		
 	}
 	
 }
@@ -75,11 +97,10 @@ func (c *Client) Ping() (string, error) {
 	}
 	defer resp.Body.Close()
 	body, err := ioutil.ReadAll(resp.Body)
-	if debug { 
-		fmt.Println("[RIAK DEBUG] GET: " + c.Endpoint + "/ping => " + string(body)) 
-	}
+	if debug { fmt.Println("[RIAK DEBUG] GET: " + c.Endpoint + "/ping => " + string(body)) }
 	return string(body), nil
 }
+
 
 
 // API Routes
@@ -110,17 +131,17 @@ func signupHandler(formatter *render.Render) http.HandlerFunc {
 		}
 
 		requestbody, _ := json.Marshal(ord)
+		
+		elb2 := getELB(ord.UserId)
 
-		elb1 := NewClient(cluster1_elb)
-
-		chk_user, _ := c1.GetUser(ord.UserId)
+		chk_user, _ := elb2.GetUser(ord.UserId)
 
 		if (ord.UserId == chk_user.UserId){
 			// stat_ok := "ok"
 			formatter.JSON(w, http.StatusOK, "user exists")
 			fmt.Println("user exists")
 		} else  {
-			value_res, error := c1.RegisterUser(ord.UserId,string(requestbody))
+			value_res, error := elb2.RegisterUser(ord.UserId,string(requestbody))
 		
 			if error != nil {
 				log.Fatal(error)
@@ -145,9 +166,9 @@ func loginHandler(formatter *render.Render) http.HandlerFunc {
 			return 
 		}
 
-		elb1 := NewClient(cluster1_elb)
+		elb2 := getELB(ord.UserId)
 
-		user_details, error := c1.GetUser(ord.UserId)
+		user_details, error := elb2.GetUser(ord.UserId)
 
 		if error != nil {
 			log.Fatal(error)
@@ -168,8 +189,8 @@ func loginHandler(formatter *render.Render) http.HandlerFunc {
 
 func allusersHandler(formatter *render.Render) http.HandlerFunc {
 	return func(w http.ResponseWriter, req *http.Request) {
-		elb1 := NewClient(cluster1_elb)
-		list_users, error := elb1.GetAllUsers()
+		elb2 := NewClient(cluster1_elb)
+		list_users, error := elb2.GetAllUsers()
 
 		if error != nil {
 			log.Fatal(error)
@@ -255,7 +276,6 @@ func (c *Client) GetAllUsers() ([]string, error) {
 	}
 	fmt.Println("Keys are",all_keys_list.Keys)
 	return all_keys_list.Keys, nil
-	
 	
 }
 
