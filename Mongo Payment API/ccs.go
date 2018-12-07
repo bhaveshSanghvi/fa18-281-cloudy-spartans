@@ -141,10 +141,10 @@ func (m *CCSDB) FindAll() ([]Order, error) {
 }
 
 //Find List
-func (m *CCSDB) FindByUserId(id string) (Order, error) {
+func (m *CCSDB) FindByUserId(id1 string) (Order, error) {
         var order Order
-        fmt.Printf(id)
-        err := db.C(COLLECTION).Find(bson.M{ "name" : id}).One(&order)
+        fmt.Printf(id1)
+        err := db.C(COLLECTION).Find(bson.M{ "name" : id1}).One(&order)
 	fmt.Printf("%v",order)
 	return order, err
 }
