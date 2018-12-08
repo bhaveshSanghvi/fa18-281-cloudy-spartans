@@ -5,8 +5,9 @@ import (
 	"log"
 	"net/http"
 	"gopkg.in/mgo.v2/bson"
+	"fmt"
+
 	"github.com/gorilla/mux"
-	. "./ccs"
 )
 
 var ccs = CCSDB{}
@@ -17,7 +18,6 @@ func testPing(w http.ResponseWriter, req *http.Request) {
 	respondWithJson(w, http.StatusOK, struct{ Test string }{"API version 1.0 alive!"})
 }
 
-//Insert into Database
 func generateAmount(w http.ResponseWriter, r *http.Request) {
 	defer r.Body.Close()
 
@@ -26,6 +26,7 @@ func generateAmount(w http.ResponseWriter, r *http.Request) {
 		respondWithError(w, http.StatusBadRequest, "Invalid request payload")
 		return
 	}
+	
 	order.ID = bson.NewObjectId()
 	order.GeneratedAmount = order.OrderCount*5
 	if err := ccs.Insert(order); err != nil {
@@ -34,16 +35,13 @@ func generateAmount(w http.ResponseWriter, r *http.Request) {
 	}
 	respondWithJson(w, http.StatusCreated, order)
 }
- 
+
 //Get all the order status
 func allOrderStatus(w http.ResponseWriter, r *http.Request) {
-
-	fmt.Println("In order status")
-	respondWithJson(w, http.StatusOK,"Hit")
-
 	defer r.Body.Close()
-
+	fmt.Printf("Came Here in ALLORDERS")
 	orders, err := ccs.FindAll()
+	
 	if err != nil {
 		respondWithError(w, http.StatusInternalServerError, err.Error())
 		return
@@ -52,11 +50,23 @@ func allOrderStatus(w http.ResponseWriter, r *http.Request) {
 	respondWithJson(w, http.StatusOK, orders)
 }
 
+// GET a order status by ID
+func orderStatus(w http.ResponseWriter, r *http.Request) {
+	defer r.Body.Close()
+	params := mux.Vars(r)
+	order, err := ccs.FindById(params["id"])
+	if err != nil {
+		respondWithError(w, http.StatusBadRequest, "Not Present")
+		return
+	}
+	respondWithJson(w, http.StatusOK, order)
+	fmt.Println("Orders: ", order)
+}
+
 func processOrders(w http.ResponseWriter, r *http.Request) {
 	defer r.Body.Close()
 	var order Order
 	var payment Payment
-	//params := mux.Vars(r)
 	decoder := json.NewDecoder(r.Body)
 	err := decoder.Decode(&payment)
 	if err != nil {
@@ -70,6 +80,7 @@ func processOrders(w http.ResponseWriter, r *http.Request) {
 		return
 	} else {
 		if (payment.EnterAmount == order.GeneratedAmount){
+			ccs.Delete(order)
 			respondWithJson(w, http.StatusOK, "Order Processed")
 			return
 		} else {
@@ -78,6 +89,7 @@ func processOrders(w http.ResponseWriter, r *http.Request) {
 		}
 	}
 }
+
 
 func respondWithError(w http.ResponseWriter, code int, msg string) {
 	respondWithJson(w, code, map[string]string{"error": msg})
@@ -100,12 +112,12 @@ func main() {
 	r.HandleFunc("/ping", testPing).Methods("GET")
 	r.HandleFunc("/amount", generateAmount).Methods("POST")
 	r.HandleFunc("/order", allOrderStatus).Methods("GET")
+	r.HandleFunc("/order/{id}", orderStatus).Methods("GET")
 	r.HandleFunc("/orders", processOrders).Methods("POST")
 	if err := http.ListenAndServe(":3001", r); err != nil {
 		log.Fatal(err)
 	}
 }
-
 
 
 
