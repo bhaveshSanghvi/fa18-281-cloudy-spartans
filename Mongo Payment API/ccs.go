@@ -1,9 +1,9 @@
-package ccs
+package main
 
 import (
 	"log"
 	"fmt"
-    s "strings"
+        s "strings"
 	mgo "gopkg.in/mgo.v2"
 	"gopkg.in/mgo.v2/bson"
 )
@@ -153,7 +153,6 @@ func (m *CCSDB) ConnecttoPrimary() {
 
 // Find list of All Drinks in the Catalog
 func (m *CCSDB) FindAll() ([]Order, error) {
-        //var order_list []Order
         session := GetMongoSession()
 	db = session.DB("testing")
 	var orders []Order
@@ -162,24 +161,28 @@ func (m *CCSDB) FindAll() ([]Order, error) {
 	return orders, err
 }
 
-//Find List
-
-func (m *CCSDB) FindByUserId(id string) (Order, error) {
-        session := GetMongoSession()
+// Find a Drink by its id
+func (m *CCSDB) FindById(id string) (Order, error) {
+	session := GetMongoSession()
 	db = session.DB("testing")
-        var order Order
-        fmt.Printf(id)
-        err := db.C(COLLECTION).Find(bson.M{ "name" : id}).One(&order)
-        fmt.Printf("%v",order)
-        defer session.Close()
+	var order Order
+	fmt.Printf("finding name = ",id)
+	err := db.C(COLLECTION).FindId(bson.ObjectIdHex(id)).One(&order)
+	fmt.Println("%v",order)
+	defer session.Close()
+	return order, err
+}
 
 func (m *CCSDB) FindByUserId(id1 string) (Order, error) {
+	session := GetMongoSession()
+	db = session.DB("testing")
         var order Order
         fmt.Printf(id1)
         err := db.C(COLLECTION).Find(bson.M{ "name" : id1}).One(&order)
 	fmt.Printf("%v",order)
-
+	defer session.Close()
 	return order, err
+}eturn order, err
 }
 
 func (m *CCSDB) Insert(order Order) error {
@@ -187,7 +190,14 @@ func (m *CCSDB) Insert(order Order) error {
 	db = session.DB("testing")
         err := dbprimary.C(COLLECTION).Insert(&order)
         defer session.Close()
-	//insert generatedamount = ordercount*5
+	return err
+}
+
+func (m *CCSDB) Delete(order Order) error {
+	session := GetMongoSession()
+        db = session.DB("testing")
+	err := db.C(COLLECTION).Remove(&order)
+	defer session.Close()
 	return err
 }
 
