@@ -22,3 +22,5 @@ A user will be able to add/remove items to the cart only when the user logs in.
 
 ### 4. Order processing service
 Items present in the shopping cart can be processed.
+
+![Architecture](Architecture.png)
