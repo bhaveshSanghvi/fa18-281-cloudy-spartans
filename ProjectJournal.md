@@ -240,3 +240,41 @@ The Cart API receives the input json from catalog API, and forwards it to the EL
 
 ![Order Processing/Payment API Architecture](Payment_API.png)
 
+
+### Test Cases implementation:
+**Test Scenario 1:**   
+Communication between Cart API and Order Processing API to map the number of orders to process.  
+**Test Result:**  
+The count is successfully received by Processing API from Cart API through front end.
+
+**Test Scenario 2:**   
+Communicate the status of Order Processing from Order Processing API to Cart API in order to delete the cart.  
+**Test Result:**  
+On successful paymet, HttpStatusOk response is sent to the Cart API via back end to empty the cart.
+
+**Test Scenario 3:**    
+Communication between the FrontEnd and Cart API to create/update order.  
+**Test Result:**  
+Based on the actions performed by user, new items are added/updated from the cart.
+
+**Test Scenario 4:**  
+Communication between the FrontEnd and Catalog API to add/update items in catalog.  
+**Test Result:**
+Based on the UserType, if an user is an admin, the user will be able to add/update items in catalog.
+
+**Test Scenario 5:**   
+Communication between the FrontEnd and SignUp to Create/Validate a User.  
+**Test Result:**  
+Based on the input provided from the front end Sign Up page, a user will be registered. 
+Login page validates a user based on the input provided from front end and the values present in the database.  
+
+**Test Scenario 6:**  
+Authorising an admin user from Login API to FrontEnd application for adding/editing an item in the catalog.  
+**Test Result:**  
+If the user is an admin user, he/she is able to add/update items in the catalog. 
+
+
+
+
+
+
