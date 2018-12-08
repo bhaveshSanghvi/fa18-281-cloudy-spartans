@@ -34,9 +34,11 @@ func generateAmount(w http.ResponseWriter, r *http.Request) {
 	}
 	respondWithJson(w, http.StatusCreated, order)
 }
-
+ 
 //Get all the order status
 func allOrderStatus(w http.ResponseWriter, r *http.Request) {
+	fmt.Println("In order status")
+	respondWithJson(w, http.StatusOK,"Hit")
 	orders, err := ccs.FindAll()
 	if err != nil {
 		respondWithError(w, http.StatusInternalServerError, err.Error())

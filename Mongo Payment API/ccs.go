@@ -34,6 +34,8 @@ const (
 	MongoServer5 = "10.0.3.254"
 )
 
+
+var mgoSession   *mgo.Session
 //Initiate connection to database
 func (m *CCSDB) Connect() {
 	fmt.Printf("In Connect1")
@@ -50,6 +52,23 @@ func (m *CCSDB) Connect() {
     }
 	db = session.DB("testing")
 }
+
+func GetMongoSession() *mgo.Session {
+        mongoDBDialInfo := &mgo.DialInfo{
+                Addrs:    []string{MongoDBHosts},
+                Database: AuthDatabase,
+                Username: AuthUserName,
+                Password: AuthPassword,
+        }
+        if mgoSession == nil {
+            var err error
+            mgoSession, err = mgo.DialWithInfo(mongoDBDialInfo)
+            if err != nil {
+                log.Fatal("Failed to start the Mongo session")
+            }
+        }
+        return mgoSession.Clone()
+ }
 
 // Make sure the write happens to Master of the Mongo Database
 func (m *CCSDB) ConnecttoPrimary() {
@@ -134,23 +153,32 @@ func (m *CCSDB) ConnecttoPrimary() {
 
 // Find list of All Drinks in the Catalog
 func (m *CCSDB) FindAll() ([]Order, error) {
-	//var order_list []Order
+        //var order_list []Order
+        session := GetMongoSession()
+	db = session.DB("testing")
 	var orders []Order
-	err := db.C(COLLECTION).Find(bson.M{}).All(&orders)
+        err := db.C(COLLECTION).Find(bson.M{}).All(&orders)
+        defer session.Close()
 	return orders, err
 }
 
 //Find List
 func (m *CCSDB) FindByUserId(id string) (Order, error) {
+        session := GetMongoSession()
+	db = session.DB("testing")
         var order Order
         fmt.Printf(id)
         err := db.C(COLLECTION).Find(bson.M{ "name" : id}).One(&order)
-	fmt.Printf("%v",order)
+        fmt.Printf("%v",order)
+        defer session.Close()
 	return order, err
 }
 
 func (m *CCSDB) Insert(order Order) error {
-	err := dbprimary.C(COLLECTION).Insert(&order)
+        session := GetMongoSession()
+	db = session.DB("testing")
+        err := dbprimary.C(COLLECTION).Insert(&order)
+        defer session.Close()
 	//insert generatedamount = ordercount*5
 	return err
 }
