@@ -5,6 +5,7 @@ var bodyParser = require('body-parser');
 var axios = require('axios');
 app.use(express.json());
 app.use(bodyParser.urlencoded({ extended: true }));
+// app.use(cors({ origin: 'https://test-app-12346.herokuapp.com', credentials: true }));
 app.use(cors({ origin: 'http://localhost:3000', credentials: true }));
 var multer = require("multer");
 const fetch = require("node-fetch");
@@ -12,7 +13,10 @@ const request = require("request");
 app.use(bodyParser.json());
 let fs = require("fs");
 var axios = require("axios")
+var jwt = require("jsonwebtoken");
+
 app.use(function(req, res, next) {
+    // res.setHeader('Access-Control-Allow-Origin', 'https://test-app-12346.herokuapp.com');
     res.setHeader('Access-Control-Allow-Origin', 'http://localhost:3000');
     res.setHeader('Access-Control-Allow-Credentials', 'true');
     res.setHeader('Access-Control-Allow-Methods', 'GET,HEAD,OPTIONS,POST,PUT,DELETE');
@@ -75,7 +79,7 @@ app.post('/addadrink',function(req,res){
         }
       else
         {
-          res.send(200)
+          res.status(200).send("Success")
           res.end("Success")
         }
       })
@@ -84,6 +88,7 @@ app.post('/addadrink',function(req,res){
 
 
 app.post("/processOrders/:orderid",(req,res)=>{
+
   const orderid = req.params.orderid;
 
   const data = {
@@ -91,9 +96,7 @@ app.post("/processOrders/:orderid",(req,res)=>{
     userAmount: req.body.price
   }
   axios.post("http://54.241.71.96:3001/orders",data).then((response)=>{
-
     res.sendStatus(200)
-
   }).catch((error)=>{
       res.status(201).json({
         erorr : "We could not process orders"
@@ -102,8 +105,6 @@ app.post("/processOrders/:orderid",(req,res)=>{
 
 
 })
-
-
 
 const url_3 = "http://54.177.74.65:3000/signup";
 app.post('/signup',function(req,res){
@@ -119,14 +120,53 @@ app.post('/signup',function(req,res){
       email : req.body.email
 })})
 .then(response => {
-  if(response.status === 400)
+  if(response.status != 200)
     {
-      this.setState({errors : true})
+      console.log("Failure")
+      res.status(400).send("Login Failed")
+      res.end("Failure")
     }
   else
     {
-      res.send("Success")
-      res.end("Success")
+      const body = { _id: req.body.username, type: "user" };
+      const token = jwt.sign(
+        { user: body },
+        "CCSUSER"
+      );  
+
+      res.status(200).send(JSON.stringify(token));
+    }
+  })
+});
+
+
+const url_login_admin = "http://54.177.74.65:3000/login";
+app.post('/admin/login',function(req,res){
+  console.log("REQ BODY", req.body)
+  fetch(url_login_admin, {
+    method: 'post',
+    headers: {'Content-Type': 'application/json'},
+    credentials : 'include',
+    body: JSON.stringify({
+      Userid: req.body.username,
+      Password: req.body.password
+})})
+.then(response => {
+  if(response.status != 200)
+    {
+      console.log("Failure")
+      res.status(400).send("Login Failed")
+      res.end("Failure")
+    }
+  else
+    {
+      const body = { _id: req.body.username, type: "admin" };
+      console.log("tooken")
+      const token = jwt.sign(
+        { user: body },
+        "CCSUSER"
+      );  
+      res.status(200).send(JSON.stringify(token));
     }
   })
 });
@@ -144,18 +184,25 @@ app.post('/login',function(req,res){
       Password: req.body.password
 })})
 .then(response => {
-  if(response.status === 400)
+  if(response.status != 200)
     {
-      this.setState({errors : true})
+      console.log("Failure")
+      res.status(400).send("Login Failed")
+      res.end("Failure")
     }
   else
     {
-      console.log("Succeess")
-      res.send("Success")
-      res.end("Success")
+      const body = { _id: req.body.username, type: "user" };
+      const token = jwt.sign(
+        { user: body },
+        "CCSUSER"
+      );  
+
+      res.status(200).send(JSON.stringify(token));
     }
   })
 });
+
 
 const url_4 = "http://52.8.43.95:3000/cart";
 app.post('/addtocart',function(req,res){
@@ -228,10 +275,11 @@ app.put('/addtocart',function(req,res){
 });
 
 
-const url_7 = "http://52.8.43.95:3000/checkout";
+const url_7 = "http://52.8.43.95:3000/checkout/";
 app.get('/checkout',function(req,res){
-  console.log("REQ BODY", req.body)
-  fetch(url_7, {
+  console.log("REQ BODY", req.query.name)
+ console.log(" -- " + (url_7+req.query.name))
+  fetch(url_7+req.query.name, {
     method: 'get',
     credentials : 'include'
   })
@@ -242,17 +290,15 @@ app.get('/checkout',function(req,res){
     }
   else
     {
-      console.log(response)
-      res.send("Success")
-      res.end("Success")
+      response.json()
+      .then(payment => {
+        console.log("NAME" + JSON.stringify(payment))
+        res.send(payment)
+        res.end("Success")
+        })
     }
   })
 });
-
-
-
-
-
 
 
 app.post('/addfolder',function(req,res){
@@ -353,48 +399,8 @@ app.post('/amount',function(req,res){
       error
     })
   })
-
-
-  /*
-  axios.post("http://13.56.16.252:3001/amount",data).then((response)=>{
-    console.log("inside response");
-    console.log(response.status);
-    console.log(response.data);
-    res.sendStatus(200);
-  }).catch((error)=>{
-   console.log("inside catch error");
-   console.log(error);
-   res.sendStatus(201);
-  });
-  */
- /*
-fetch("http://13.57.50.197:3001/amount", {
-    method: 'POST',
-    json: true,
-    headers: {'Content-Type': 'application/json'},
-    body: JSON.stringify({
-            name : req.body.name,
-            count : req.body.count        
-})
-})
-.then((response) => {
-  console.log(response)
-  if(response.status === 400)
-    {
-      console.log("err");
-      res.send("err");
-    }
-  else
-    {
-      console.log("successs");
-      console.log(response);
-      res.send("Success")
-      res.end("Success")
-    }
-  })  
-
-  */
 });
+
 
 app.get('/cart/:id',function(req,res){
   const url5="http://52.8.43.95:3000/cart/"+ req.params.id;
@@ -408,11 +414,19 @@ app.get('/cart/:id',function(req,res){
       })
       
     })
-  
+
+app.delete('/deletecart',function(req,res){
+  console.log("userid",req.query.username)
+  const url12="http://52.8.43.95:3000/cart/"+ req.query.username;
+  console.log("url is ",url12)
+  axios.delete(url12).then(response=>
+      {
+          console.log("Deleted ", response.data)
+          res.status(200).send(response.data);
+      }) 
+})
 
 
 app.listen(4004, () => {
     console.log("Listening on port 4004")
 })
-
-
