@@ -16,6 +16,7 @@ import (
 	"time"
 	"strings"
 	"regexp"
+	"errors"
 	// "strconv"
 )
 
@@ -101,7 +102,21 @@ func (c *Client) Ping() (string, error) {
 	return string(body), nil
 }
 
-
+// func (c *Client) Ping() (string, error) {
+// 	fmt.Println("inside ping")
+// 	resp, err := c.Get(c.Endpoint + "/ping" )
+	
+// 	if err != nil {
+// 		fmt.Println("[RIAK DEBUG] " + err.Error())
+// 		return "Ping Error!", err
+// 	}
+// 	defer resp.Body.Close()
+// 	body, err := ioutil.ReadAll(resp.Body)
+// 	if debug { 
+// 		fmt.Println("[RIAK DEBUG] GET: " + c.Endpoint  + "/ping => " + string(body)) 
+// 	}
+// 	return string(body), nil
+// }
 
 // API Routes
 func initRoutes(mx *mux.Router, formatter *render.Render) {
@@ -170,20 +185,22 @@ func loginHandler(formatter *render.Render) http.HandlerFunc {
 
 		user_details, error := elb2.GetUser(ord.UserId)
 
-		if error != nil {
-			log.Fatal(error)
-			formatter.JSON(w, http.StatusBadRequest, error)
-		}
+		// fmt.Println("error inside login ", error.Error())
 
-		if (ord.Password == user_details.Password){
-			// stat_ok := "ok"
-			formatter.JSON(w, http.StatusOK, "SUCCESS")
-			fmt.Println("Login Successful")
+		if error != nil {
+			// log.Fatal(error)
+			formatter.JSON(w, http.StatusBadRequest, error)
 		} else {
-			formatter.JSON(w, http.StatusOK, "INVALID CREDENTIALS")
-			fmt.Println("Invalid credentials")
-		}
-		
+			if (ord.Password == user_details.Password){
+				// stat_ok := "ok"
+				formatter.JSON(w, http.StatusOK, "SUCCESS")
+				fmt.Println("Login Successful")
+			} else {
+				formatter.JSON(w, http.StatusBadRequest, "INVALID CREDENTIALS")
+				fmt.Println("Invalid credentials")
+			}
+
+		}		
 	}
 }
 
@@ -226,20 +243,42 @@ func (c *Client) RegisterUser(key string, reqbody string) (user, error) {
  	return place, nil
 }
 
+type errorString struct {
+	s string
+}
+
+func (e *errorString) Error() string {
+	return e.s
+}
+
+func New(text string) error {
+	return &errorString{text}
+}
+
 func (c *Client) GetUser(key string) (user, error) {
 	var ord_nil = user {}
 	
 	resp, err := c.Get(c.Endpoint + "/buckets/users/keys/"+key)
+
+	fmt.Println(resp.StatusCode)
 	
-	if err != nil {
+
+	if err != nil{
 		fmt.Println("[RIAK DEBUG] " + err.Error())
 		return ord_nil, err
 	}
 	defer resp.Body.Close()
 	body, err := ioutil.ReadAll(resp.Body)
 
+	// var usrerr error
+
+	if resp.StatusCode== 404{
+		return ord_nil, errors.New("user not found")
+	}
+
 	if debug { fmt.Println("[RIAK DEBUG] GET: " + c.Endpoint + "/buckets/maps/keys/"+key +" => " + string(body)) }
 	var ord = user { }
+
 	if err := json.Unmarshal(body, &ord); err != nil {
 		fmt.Println("RIAK DEBUG] JSON unmarshaling failed: %s", err)
 		return ord_nil, err
@@ -248,8 +287,8 @@ func (c *Client) GetUser(key string) (user, error) {
 	return ord, nil
 }
 
+
 func (c *Client) GetAllUsers() ([]string, error) {
-	fmt.Println("inside getall")
 	var all_keys []string
 	
 	resp, error := c.Get(c.Endpoint + "/buckets/users/keys?keys=true")
@@ -277,6 +316,16 @@ func (c *Client) GetAllUsers() ([]string, error) {
 	fmt.Println("Keys are",all_keys_list.Keys)
 	return all_keys_list.Keys, nil
 	
+	// var output user
+	//  msg := json.Unmarshal(body, &output); 
+	//  fmt.Println("output", output)
+
+	// if msg != nil {
+	// 	fmt.Println("[RIAK DEBUG] JSON unmarshaling failed: %s", msg)
+	// 	return ord_nil, msg
+	// }	
+	// fmt.Println("ord is",output)
+	// return msg, nil
 }
 
 func ErrorWithJSON(w http.ResponseWriter, message string, code int) {
