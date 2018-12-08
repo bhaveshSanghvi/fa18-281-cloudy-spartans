@@ -210,8 +210,9 @@ If the both the amounts match, payment will be processed successfully otherwise,
 
 ![Signup/Login API Architecture](SignUp_Login_architecture.png)
 
-The SignUp/Login GO API takes a json input from the front end application, which is then forwarded the internal ELB.
-The internal ELB is connected to 3 nodes of the Riak cluster which are in private subnet of a VPC in North California region. Since 2 nodes of the cluster which are in private subnet of VPC in Oregon region are connected via peering connection, they'll receive all the data inserted in any of the nodes from North California Region.
+The SignUp/Login GO API takes a json input from the front end application, which is then forwarded to the internal ELBs based on the UserID. If the UserId starts from anything between [a-n] or [A-N], then the request will be forwarded to the internal ELB of North California region or else it will be forwarded to ELB of Oregon Region. 
+The two nodes of the North California cluster which are in private subnet of VPC in Oregon region are connected via peering connection, they'll receive all the data inserted in any of the nodes from North California Region.
+VPCs from both the regions are connected via peering connection.
 
 **2. Catalog/Admin API-DB architecture**
 
