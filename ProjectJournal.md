@@ -159,8 +159,8 @@ Following is the POST body for creating a new order:
 
 	{
 	 "userid" : "<user id>",
-	 "productid" : "<product id>",
 	 "cartItems" : {
+	 	"productid" : "<product id>",
 		"name" : "<product name>",
 		"price" : <product price>,
 		"size" : "<product size>",
@@ -233,6 +233,8 @@ VPCs from both the regions are connected via peering connection.
 **3. Cart API Architecture**
 
 ![Cart API Architecture](CartAPI_diagram.png)
+
+The Cart API receives the input json from catalog API, and forwards it to the ELB based on the userid. If the UserId starts with any characters between [a-n] or [A-N], the requests will be routed to the ELB in California region otherwise the requests will go to Oregon region. At any point of time, the Cart will show all the unprocessed items. If the user has not added into the cart, then the cart will be empty. At any point of time, a user can increment/decrement the count of an item in the cart. Since the clusters in two different VPCs of different regions, the API is able to communicate with the clusters because of the VPC peering connection.
 
 **4. Order Processing/Payment API Architecture**    
 
