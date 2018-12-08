@@ -16,8 +16,12 @@ import SignUp from './SignUp/SignUp';
 import AddDrink from './AddDrink/AddDrink';
 import DrinkDescription from './DrinkDescription/DrinkDescription';
 import CartCatalog from './Cart/CartCatalog';
+//<<<<<<< HEAD
 import Payment from "../components/Payment/Payment"
 
+//=======
+import AdminLogin from './AdminLogin/AdminLogin';
+//>>>>>>> fc3dee1f6e8ddad3af6552c46ca187d024fde25d
 
 class Main extends Component {
   constructor (props) {
@@ -25,10 +29,7 @@ class Main extends Component {
   this.state ={
     user: {
     name: ''
-  },
-  startdate: '',
-  enddate: '',
-  guests: '' 
+  } 
   }
 }
 
@@ -59,12 +60,18 @@ console.log("STATE IS  " + this.state.user.name);
         <div>
         <Route exact path="/" render={()=>(<StarterPage value={this.state.user.name} />)} />    
         <Route exact path="/home" render={()=>(<DrinksCatalog value={this.state.user.name} />)} />  
+
         <Route exact path="/login" render={()=>(<Login value={this.state.user.name} />)} />   
         <Route exact path="/signup" render={()=>(<SignUp value={this.state.user.name} />)} />  
 
         {/* <Route exact path="/addadrink" render={()=>(<AddDrink value={this.state.user.name} />)} />  */}
         {/* <Route path="/drinks" render={()=>(<DrinkDescription value={this.state.user.name} />)} />   */}
         <Route exact path="/payment" component={Payment} />
+
+
+        <Route exact path="/login" render={()=>(<Login loadUser={this.loadUser} />)} />   
+        <Route exact path="/admin/login" render={()=>(<AdminLogin value={this.state.user.name} />)} />   
+        <Route exact path="/signup" render={()=>(<SignUp loadUser={this.loadUser} />)} />  
 
         <Route exact path="/addadrink" render={()=>(<AddDrink value={this.state.user.name} />)} /> 
         <Route path="/drinks" render={()=>(<DrinkDescription value={this.state.user.name} />)} />
