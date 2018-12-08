@@ -43,7 +43,7 @@ app.get('/getalldrinks',function(req,res){
 
 app.get('/order/:orderid',function(req,res){
   const orderid = req.params.orderid;
-  const url11 = "http://18.144.63.198:3001/order/"+orderid;
+  const url11 = "http://54.241.71.96:3001/order/"+orderid;
   console.log("url is ",url11)
 
   axios.get(url11).then(response=>
@@ -90,7 +90,7 @@ app.post("/processOrders/:orderid",(req,res)=>{
     name : req.body.name,
     userAmount: req.body.price
   }
-  axios.post("http://18.144.63.198:3001/orders",data).then((response)=>{
+  axios.post("http://54.241.71.96:3001/orders",data).then((response)=>{
 
     res.sendStatus(200)
 
@@ -342,7 +342,7 @@ app.post('/amount',function(req,res){
     count : req.body.count 
   }
 
-  axios.post("http://18.144.63.198:3001/amount",data).then((response)=>{
+  axios.post("http://54.241.71.96:3001/amount",data).then((response)=>{
     console.log(response.status);
     console.log(response.data);
     res.status(200).json(response.data);
