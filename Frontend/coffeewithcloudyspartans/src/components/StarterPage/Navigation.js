@@ -15,22 +15,16 @@ class Navigation extends Component {
     }
     render(){
         let navLogin = null;
-        if(USERTYPE==="traveler"){
+        if(true){
             console.log("Able to read cookie");
-            let tripsboard =(
-              <li class="nav-item nav-link lower" >
-                   <li ><Link to="/tripsboard"><p>Trips Board</p><span class="sr-only">(current)</span></Link></li>
-            </li>)
            navLogin = (
                <li class="nav-item dropdown ">
                 <a class="nav-link dropdown-toggle lower " href="Dashboard" id="navbarDropdownMenuLink" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                    Srinivas
+                    {localStorage.getItem("usernamey")}
                 </a>
                 <div class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
-                     <a class="dropdown-item "><Link to="/inbox" >My Orders</Link></a>
-                     <a class="dropdown-item" ><Link to="/tripsboard">My Cart</Link></a>
-                     <a class="dropdown-item" ><Link to="/traveller/accounty">Payments</Link></a>
-                     <a class="dropdown-item" ><Link to="#">Account</Link></a>
+                     <a class="dropdown-item" ><Link to="/mycart">My Cart</Link></a>
+                     <a class="dropdown-item" ><Link to="/payment">Payments</Link></a>
                 </div>
                 </li>
             );
@@ -59,10 +53,6 @@ class Navigation extends Component {
                 <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNavDropdown" aria-controls="navbarNavDropdown" aria-expanded="false" aria-label="Toggle navigation">
                     <span class="navbar-toggler-icon"></span>
                 </button>
-                <img class="addspaceinnavbar" src="https://img.icons8.com/color/50/000000/search.png"></img>
-                <div class="">
-                <input className="form-control smally searchbar" type="text" placeholder="Search a drink!" name="Company" value={this.props.Company} onChange={this.props.Change}></input>
-                </div>
                 <div id="navbarNavDropdown" class="navbar-collapse collapse">
                     <ul class="navbar-nav mr-auto">
                     </ul>

@@ -1,10 +1,9 @@
 import React from 'react';
-import './Login.css';
 import { Container, Row, Col, Button, Fa, Card, CardBody, ModalFooter } from 'mdbreact';
 import {Redirect} from 'react-router-dom';
 import cookie from 'react-cookies';
 
-class Login extends React.Component {
+class AdminLogin extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
@@ -40,16 +39,12 @@ class Login extends React.Component {
         }
       else
         {
-         /* response.json()
+          response.json()
           .then(user => {
           console.log("NAME" + user)
           this.props.loadUser(user);
           this.setState({Redirection_Value : true})
           })
-          */
-         this.props.loadUser(this.state.signInEmail);
-         alert("Login Succeess")
-         this.setState({Redirection_Value : true})
         }
       })
   }
@@ -58,7 +53,7 @@ class Login extends React.Component {
   {
     let Redirecty = null;
     let Errors = null;
-    if(this.state.Redirection_Value === true)
+    if(this.state.Redirection_Value === true && cookie.load('cookie'))
     {
      Redirecty =  <Redirect to="/home" />
     }
@@ -105,4 +100,4 @@ class Login extends React.Component {
       );
   }
 }
-export default Login;
+export default AdminLogin;

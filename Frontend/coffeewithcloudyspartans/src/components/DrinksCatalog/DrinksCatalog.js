@@ -79,7 +79,9 @@ handleClickDrink(key){
         let redirecty_value = null;
         redirecty_value  = (
           <div class="middle">
+          <div className="float-right">
            <Link to="/mycart"><button className="btn btn-primary">Go to Cart</button></Link>
+           </div>
            <table class="tabledef">
            <tbody>
            {  

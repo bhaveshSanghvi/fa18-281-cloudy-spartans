@@ -93,26 +93,35 @@ app.post('/signup',function(req,res){
 });
 
 
+const url_login = "http://54.177.74.65:3000/login";
+app.post('/login',function(req,res){
+  console.log("REQ BOIDY", req.body)
+  fetch(url_login, {
+    method: 'post',
+    headers: {'Content-Type': 'application/json'},
+    credentials : 'include',
+    body: JSON.stringify({
+      Userid: req.body.username,
+      Password: req.body.password
+})})
+.then(response => {
+  if(response.status === 400)
+    {
+      this.setState({errors : true})
+    }
+  else
+    {
+      console.log("Succeess")
+      res.send("Success")
+      res.end("Success")
+    }
+  })
+});
+
 const url_4 = "http://52.8.43.95:3000/cart";
 app.post('/addtocart',function(req,res){
   console.log("REQ BOIDY", req.body)
   console.log("url is ",url_4)
-  // axios.post(url_4,
-  // {
-  //   userid : req.body.userid,
-  //         productid : req.body.product,
-  //         cartItems : {
-  //             name: req.body.name,
-  //             price : req.body.price,
-  //             size: req.body.size,
-  //             count : 1
-  //   }
-  // }).then(response=>
-  //     {
-  //         console.log("response is ", response.data)
-  //         res.status(200).send(response.data);
-  //     })
-
   fetch(url_4, {
     method: 'post',
     headers: {'Content-Type': 'application/json'},

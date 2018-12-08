@@ -8,6 +8,7 @@ import SignUp from './SignUp/SignUp';
 import AddDrink from './AddDrink/AddDrink';
 import DrinkDescription from './DrinkDescription/DrinkDescription';
 import CartCatalog from './Cart/CartCatalog';
+import AdminLogin from './AdminLogin/AdminLogin';
 
 class Main extends Component {
   constructor (props) {
@@ -15,10 +16,7 @@ class Main extends Component {
   this.state ={
     user: {
     name: ''
-  },
-  startdate: '',
-  enddate: '',
-  guests: '' 
+  } 
   }
 }
 
@@ -49,8 +47,9 @@ console.log("STATE IS  " + this.state.user.name);
         <div>
         <Route exact path="/" render={()=>(<StarterPage value={this.state.user.name} />)} />    
         <Route exact path="/home" render={()=>(<DrinksCatalog value={this.state.user.name} />)} />  
-        <Route exact path="/login" render={()=>(<Login value={this.state.user.name} />)} />   
-        <Route exact path="/signup" render={()=>(<SignUp value={this.state.user.name} />)} />  
+        <Route exact path="/login" render={()=>(<Login loadUser={this.loadUser} />)} />   
+        <Route exact path="/admin/login" render={()=>(<AdminLogin value={this.state.user.name} />)} />   
+        <Route exact path="/signup" render={()=>(<SignUp loadUser={this.loadUser} />)} />  
         <Route exact path="/addadrink" render={()=>(<AddDrink value={this.state.user.name} />)} /> 
         <Route path="/drinks" render={()=>(<DrinkDescription value={this.state.user.name} />)} />
         <Route path="/mycart" render={()=>(<CartCatalog value={this.state.user.name} />)} />              
