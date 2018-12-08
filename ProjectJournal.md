@@ -96,6 +96,22 @@ To fetch the whole catalog from the Database. Displays the drink with Name, Pric
 
 Example : 
 ```
+	       [
+		{
+		"id": "<Unique ID>",
+		"name": "<Name of the Drink>",
+		"price": <Price>,
+		"size": <Size>,
+		"description": <Description>
+	        },
+   	        {
+		"id": "<Unique ID>",
+		"name": "<Name of the Drink>",
+		"price": <Price>,
+		"size": <Size>,
+		"description": <Description>
+	        }
+		]
 ```
  
 <b> /drink/{id} </b> : 
@@ -104,6 +120,14 @@ To fetch a particular drink based on the id (bson object).
 
 Example : 
 ```
+	{
+	   	"id": "<Unique ID>",
+		"name": "<Name of the Drink>",
+		"price": <Price>,
+		"size": <Size>,
+		"description": <Description>
+	       
+	}
 ```
 
 <b> /addaadrink </b> : 
@@ -113,24 +137,12 @@ Reqires Admin Authentication, Name, Price, Size and Photo of the drink.
 
 Example : 
 ```
-```
-
-<b> /delete </b>
-
-To Delete a drink from the catalog.
-Requires Admin Authentication and id of the drink.
-
-Example : 
-```
-```
-
-<b> /updatedrink </b>
-
-To update the features of the drink.
-Requires Admin Authentication and new json object needs to be posted to modify the information.
-
-Example : 
-```
+{
+	    "name": "White Chocolate Mocha",
+	    "price": 5,
+	    "size": "Venti",
+	    "description": "Best Drink Ever"
+	}
 ```
 
 
@@ -152,7 +164,7 @@ Following is the POST body for creating a new order:
 		"name" : "<product name>",
 		"price" : <product price>,
 		"size" : "<product size>",
-		"count" : 1
+		"count" : <count>
 	 }
 	}
 
