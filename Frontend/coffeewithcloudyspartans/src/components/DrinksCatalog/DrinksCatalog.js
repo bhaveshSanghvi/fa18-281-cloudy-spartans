@@ -5,6 +5,9 @@ import {Link} from 'react-router-dom';
 import Drinks from '../Drinks/Drinks'
 import Navigation from '../StarterPage/Navigation'
 import { Container, Row, Col, Button, Fa, Card, CardBody, ModalFooter } from 'mdbreact';
+var swal = require('sweetalert')
+
+const URL="http://localhost:4004"
 class DrinksCatalog extends React.Component {
 
  constructor(props) {
@@ -34,12 +37,12 @@ class DrinksCatalog extends React.Component {
 handleClickDrink(key){
   console.log("Drink ID " + JSON.stringify(key));
   localStorage.setItem("DrinkItem" , key)
-  fetch('http://localhost:4004/addtocart', {
+  fetch(URL+'/addtocart', {
     method: 'post',
     headers: {'Content-Type': 'application/json'},
     credentials : 'include',
     body: JSON.stringify({
-        userid : "test_user1",
+        userid : localStorage.getItem("usernamey"),
         cartItems : {
           productid : key.id,
           name : key.name,
@@ -53,10 +56,11 @@ handleClickDrink(key){
     if(response.status === 400)
       {
         this.setState({errors : true})
+        swal("Drink Cannot be Added!"," ", "failure");
       }
     else
       {
-        alert("Drink Added")
+        swal("Drink Added successfully!", " ", "success");
      }
     })
 
@@ -64,7 +68,7 @@ handleClickDrink(key){
 
   componentDidMount() {
     var result = []
-    fetch('http://localhost:4004/getalldrinks')
+    fetch(URL+'/getalldrinks')
     .then((response) => {
     response.json()
     .then(drinks => {
@@ -77,39 +81,44 @@ handleClickDrink(key){
 
     let Redirect_to_login = null;
         let redirecty_value = null;
-        redirecty_value  = (
-          <div class="middle">
-          <div className="float-right">
-           <Link to="/mycart"><button className="btn btn-primary">Go to Cart</button></Link>
-           </div>
-           <table class="tabledef">
-           <tbody>
-           {  
-             this.state.Drinks.map((drink, index) => {
-               console.log("TRIPS IS ", drink)
-                 return ( 
-                   <Drinks
-                    key={index}
-                    drinkinfo={drink}
-                    id = {drink.productid}
-                    name={drink.name}
-                    sizes={drink.size}
-                    price={drink.price}
-                    clicked={this.handleClick}
-                    drinkclicked= {this.handleClickDrink}
-                   />  
-                 );
-               })
+        var USERTYPE = localStorage.getItem("ACCOUNTTYPE")
+            if(USERTYPE==="user"){
+                  redirecty_value  = (
+                    <div class="middle">
+                    <div className="float-right">
+                      </div>
+                      <table class="tabledef">
+                      <tbody>
+                      {  
+                        this.state.Drinks.map((drink, index) => {
+                          console.log("TRIPS IS ", drink)
+                            return ( 
+                              <Drinks
+                              key={index}
+                              drinkinfo={drink}
+                              id = {drink.productid}
+                              name={drink.name}
+                              sizes={drink.size}
+                              price={drink.price}
+                              clicked={this.handleClick}
+                              drinkclicked= {this.handleClickDrink}
+                              />  
+                            );
+                          })
              }
              </tbody>
              </table>
            </div>
          );
+      }
+      else{
+        Redirect_to_login = <Redirect to="/login" />
+      }
 
     return (
-      <div>
-      <Navigation />
+      <div> 
       {Redirect_to_login}
+      <Navigation />
       <div class="divide">
       </div>
       <div id="bodydiv" >

@@ -1,6 +1,6 @@
 .backgroundcontainer
 {
-	background-image: url('https://greenvalleyranch.sclv.com/~/media/Images/Page-Background-Images/GVR/Hotel/GV_Hotel_Exterior4Pool-2012.jpg?h=630&la=en&w=1080');
+	background-image: url('http://eskipaper.com/images/cool-coffee-wallpaper-1.jpg?h=630&la=en&w=1080');
 	height : 100% !important;
 }
 
@@ -11,22 +11,27 @@
 	position: fixed;
 }
 
+.whitefont
+{
+	color: #fff;
+}
 body{
 	height: 100%;
 }
-
-.container {
+.containerone
+{
 	padding-top: 500px;
 	justify-content: center;
 	text-align: center;	
 	align-content: center;
 }
 
-.centered {
-  position: fixed; /* or absolute */
-  top: 45%;
-  padding-left: 15%;
-  bottom: 50%;
+.centeredone
+{
+	position: fixed; /* or absolute */
+	top: 45%;
+	padding-left: 15%;
+	bottom: 50%;
 }
 
 .form-controly

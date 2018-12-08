@@ -2,7 +2,9 @@ import React from 'react';
 import { Container, Row, Col, Button, Fa, Card, CardBody, ModalFooter } from 'mdbreact';
 import {Redirect} from 'react-router-dom';
 import cookie from 'react-cookies';
+import jwtDecode from 'jwt-decode';
 
+const URL="http://localhost:4004"
 class AdminLogin extends React.Component {
   constructor(props) {
     super(props);
@@ -23,7 +25,7 @@ class AdminLogin extends React.Component {
   }
 
   onSubmitSignIn = () => {
-    fetch('http://localhost:4004/login', {
+    fetch(URL + '/admin/login', {
       method: 'post',
       headers: {'Content-Type': 'application/json'},
       credentials : 'include',
@@ -41,10 +43,16 @@ class AdminLogin extends React.Component {
         {
           response.json()
           .then(user => {
-          console.log("NAME" + user)
-          this.props.loadUser(user);
-          this.setState({Redirection_Value : true})
-          })
+         var decoded = jwtDecode(user);
+              var accounttype = decoded.user.type;
+              var userone = decoded.user._id;
+              console.log("ACC - " + accounttype)
+              console.log("USER", userone)
+              localStorage.setItem("ACCOUNTTYPE", accounttype);
+                console.log("NAME - " + userone)
+                this.props.loadUser(userone);
+                this.setState({Redirection_Value : true})
+        })
         }
       })
   }
@@ -53,9 +61,9 @@ class AdminLogin extends React.Component {
   {
     let Redirecty = null;
     let Errors = null;
-    if(this.state.Redirection_Value === true && cookie.load('cookie'))
+    if(this.state.Redirection_Value === true || localStorage.getItem("ACCOUNTTYPE") === "admin")
     {
-     Redirecty =  <Redirect to="/home" />
+     Redirecty =  <Redirect to="/addadrink" />
     }
     if(this.state.errors === true)
     {
@@ -69,14 +77,13 @@ class AdminLogin extends React.Component {
        <h1 class="makeitceneter"> Log in to Coffee with Cloudy Spartans</h1>
        <br />
        <br />
-        <p className="font-small grey-text d-flex justify-content-center">Not a member? <a href="/signup" className="blue-text ml-1"> Sign Up</a></p>
         <section className="form-elegant">
           <Row >
             <Col md="4" className="mx-auto">
               <Card>
                 <CardBody className="mx-4">
                   <div className="text-center">
-                    <h3 className="dark-grey-text mb-5">Account Login</h3>
+                    <h3 className="dark-grey-text mb-5">Admin Account Login</h3>
                     <hr></hr>
                   </div>
                   <input type="email" class="form-control" id="exampleInputEmail1" aria-describedby="emailHelp" placeholder="Username"  onChange={this.onEmailChange} required/>

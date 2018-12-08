@@ -3,6 +3,8 @@ import './Cart.css';
 import {Route} from 'react-router-dom'
 import Link from 'react-router-dom/Link';
 
+
+const URL="http://localhost:4004"
 class Cart extends Component {
     constructor(props) {
     super(props);
@@ -13,7 +15,7 @@ class Cart extends Component {
 
   componentDidMount()
   {
-        fetch('http://localhost:4004/getDrinkImg', {
+        fetch(URL+ '/getDrinkImg', {
           method: 'post',
           headers: {'Content-Type': 'application/json'},
           credentials : 'include',
@@ -38,7 +40,6 @@ class Cart extends Component {
   }
   render()
   {
-	  let redirect_url = "/drinks/drinkdescription/" + this.props.name
     let carousalBlock = this.state.photos.map(function (item, index) {
 
             return (
@@ -56,20 +57,23 @@ class Cart extends Component {
         });
 
       return (
-        <div class="ownercard3 ownercard-2" >
-        <div class="ui divided items">
-        <div class="item">
-         <div class="image-card">
-            <div id="myCarousel" className="carousel slide" data-ride="carousel">
-                              <ul className="carousel-indicators">
-                                  {carousalIndicator}
-                              </ul>
-                              <div className="carousel-inner">
-                                  {carousalBlock}
-                              </div>                     
-          </div>
-          </div>
-          <div class="content descrip">
+        <div className="row justify-content-center ownercard3 ownercard-2" >
+         <div className="col-md-12" >
+                  <div className="row" style={{padding:'5px'}} >
+                  <div className="col-md-6">
+              <div class="image-card">
+                <div id="myCarousel" className="carousel slide contain" data-ride="carousel">
+                  <ul className="carousel-indicators">
+                    {carousalIndicator}
+                  </ul>
+                  <div className="carousel-inner">
+                    {carousalBlock}
+                  </div>
+                </div>
+              </div>
+                  </div>
+
+           <div className="col-md-6 content descrip">
             <div class="meta">  
               <span class="cinema"> Name : {this.props.name}</span>
             </div>

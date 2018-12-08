@@ -2,8 +2,7 @@ import React from 'react';
 import './Login.css';
 import { Container, Row, Col, Button, Fa, Card, CardBody, ModalFooter } from 'mdbreact';
 import {Redirect} from 'react-router-dom';
-import cookie from 'react-cookies';
-
+import jwtDecode from 'jwt-decode';
 class Login extends React.Component {
   constructor(props) {
     super(props);
@@ -34,23 +33,26 @@ class Login extends React.Component {
       })
     })
     .then(response => {
-      if(response.status === 400)
+      console.log(response.status)
+      if(response.status != 200)
         {
           this.setState({errors : true})
         }
       else
         {
-         /* response.json()
+         response.json()
           .then(user => {
-          console.log("NAME" + user)
-          this.props.loadUser(user);
-          this.setState({Redirection_Value : true})
-          })
-          */
-         this.props.loadUser(this.state.signInEmail);
-         alert("Login Succeess")
-         this.setState({Redirection_Value : true})
-        }
+         var decoded = jwtDecode(user);
+              var accounttype = decoded.user.type;
+              var userone = decoded.user._id;
+              console.log("ACC - " + accounttype)
+              console.log("USER", userone)
+              localStorage.setItem("ACCOUNTTYPE", accounttype);
+                console.log("NAME - " + userone)
+                this.props.loadUser(userone);
+                this.setState({Redirection_Value : true})
+        })
+      }
       })
   }
   
@@ -99,7 +101,9 @@ class Login extends React.Component {
             </Col>
           </Row>
         </section>
+        <div class="padleft">
          {Errors}
+         </div>
       </Container>
       </div>
       );

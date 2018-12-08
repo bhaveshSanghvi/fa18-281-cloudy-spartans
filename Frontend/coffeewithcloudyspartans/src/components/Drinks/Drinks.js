@@ -1,8 +1,7 @@
 import React,{Component} from 'react';
 import './Drinks.css';
-import {Route} from 'react-router-dom'
 import Link from 'react-router-dom/Link';
-
+const URL="http://localhost:4004"
 class Drinks extends Component {
     constructor(props) {
     super(props);
@@ -13,7 +12,7 @@ class Drinks extends Component {
 
   componentDidMount()
   {
-        fetch('http://localhost:4004/getDrinkImg', {
+        fetch(URL+'/getDrinkImg', {
           method: 'post',
           headers: {'Content-Type': 'application/json'},
           credentials : 'include',
@@ -38,7 +37,6 @@ class Drinks extends Component {
   }
   render()
   {
-	  let redirect_url = "/drinks/drinkdescription/" + this.props.name
     let carousalBlock = this.state.photos.map(function (item, index) {
 
             return (
@@ -55,73 +53,7 @@ class Drinks extends Component {
             )
         });
 
-        /*
-        <div class="ownercard3 ownercard-2" >
-        <div class="ui divided items">
-        <div class="item">
-         <div class="image-card">
-            <div id="myCarousel" className="carousel slide" data-ride="carousel">
-                              <ul className="carousel-indicators">
-                                  {carousalIndicator}
-                              </ul>
-                              <div className="carousel-inner">
-                                  {carousalBlock}
-                              </div>                     
-          </div>
-          </div>
-          <div class="content descrip">
-           <li><Link to={redirect_url} value={this.props.name} onClick={id=>this.props.clicked(this.props.name)} class="header">{this.props.name}</Link></li>
-            <div class="meta">  
-              <span class="cinema"> Name : {this.props.name}</span>
-            </div>
-            <div class="description">
-              <p> Desciption : {"Must try special from Coffee with Cloudy Spartans"}</p>
-            </div>
-            <div class="extra">
-              <div class="ui label">Sizes : {this.props.sizes}</div>
-              <div class="ui label">Price : {this.props.price}</div>
-            </div>
-          </div>
-          <button className="btn btn-primary" onClick={drinkinfo=>this.props.drinkclicked(this.props.drinkinfo)}>Add to Cart</button>
-        </div>
-        </div>
-        </div>
-        */
-
-
-
       return (
-        // <div class="ownercard3 ownercard-2" >
-        // <div class="ui divided items">
-        // <div class="item">
-        //  <div class="image-card">
-        //     <div id="myCarousel" className="carousel slide" data-ride="carousel">
-        //                       <ul className="carousel-indicators">
-        //                           {carousalIndicator}
-        //                       </ul>
-        //                       <div className="carousel-inner">
-        //                           {carousalBlock}
-        //                       </div>                     
-        //   </div>
-        //   </div>
-        //   <div class="content descrip">
-        //    <li><Link to={redirect_url} value={this.props.name} onClick={id=>this.props.clicked(this.props.name)} class="header">{this.props.name}</Link></li>
-        //     <div class="meta">  
-        //       <span class="cinema"> Name : {this.props.name}</span>
-        //     </div>
-        //     <div class="description">
-        //       <p> Desciption : {"Must try special from Coffee with Cloudy Spartans"}</p>
-        //     </div>
-        //     <div class="extra">
-        //       <div class="ui label">Sizes : {this.props.sizes}</div>
-        //       <div class="ui label">Price : {this.props.price}</div>
-        //     </div>
-        //   </div>
-        //   <button className="btn btn-primary" onClick={drinkinfo=>this.props.drinkclicked(this.props.drinkinfo)}>Add to Cart</button>
-        // </div>
-        // </div>
-        // </div>
-        //style={{border:'1px solid red'}}
 
           <div className="row justify-content-center ownercard3 ownercard-2" >
                 <div className="col-md-12" >
@@ -140,7 +72,7 @@ class Drinks extends Component {
                   </div>
 
                   <div className="col-md-6 content descrip">
-                  <li><Link to={redirect_url} value={this.props.name} onClick={id=>this.props.clicked(this.props.name)} class="header">{this.props.name}</Link></li>
+                  <li class="header">{this.props.name}</li>
                   <p className="cinema"> Name : {this.props.name}</p>
                   <p className="description"> Desciption : {"Must try special from Coffee with Cloudy Spartans"}</p>
                   <p class="ui label">Sizes : {this.props.sizes}</p>

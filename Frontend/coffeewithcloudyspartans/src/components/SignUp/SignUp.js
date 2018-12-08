@@ -2,7 +2,11 @@ import React from 'react';
 import './SignUp.css';
 import { Container, Row, Col, Button, Fa, Card, CardBody, ModalFooter } from 'mdbreact';
 import {Redirect} from 'react-router-dom';
-import cookie from 'react-cookies';
+
+import jwtDecode from 'jwt-decode';
+
+const URL="http://localhost:4004"
+
 class SignUp extends React.Component {
 
   constructor(props) {
@@ -16,15 +20,6 @@ class SignUp extends React.Component {
       errors : false
     }
   }
-
-  /*
-{
-	"Userid":"abc",
-	"email": "abc@abc.com",
-	"UserType": "admin",
-	"Password": "abc123"
-}
-  */
 
   onUseridChange = (event) => {
     this.setState({Userid: event.target.value})
@@ -44,7 +39,7 @@ class SignUp extends React.Component {
   }
 
   onSubmitSignIn = () => {
-    fetch('http://localhost:4004/signup', {
+    fetch(URL+'/signup', {
       method: 'post',
       headers: {'Content-Type': 'application/json'},
       credentials : 'include',
@@ -62,14 +57,18 @@ class SignUp extends React.Component {
         }
       else
         {
-          alert("User Signed Up")
-         /* response.json()
+          response.json()
           .then(user => {
-          console.log("NAME" + user)
-          this.props.loadUser(user);
-          this.setState({Redirection_Value : true})
-          })
-        */
+         var decoded = jwtDecode(user);
+              var accounttype = decoded.user.type;
+              var userone = decoded.user._id;
+              console.log("ACC - " + accounttype)
+              console.log("USER", userone)
+              localStorage.setItem("ACCOUNTTYPE", accounttype);
+                console.log("NAME - " + userone)
+                this.props.loadUser(this.state.Userid);
+                this.setState({Redirection_Value : true})
+        })
        }
       })
   }

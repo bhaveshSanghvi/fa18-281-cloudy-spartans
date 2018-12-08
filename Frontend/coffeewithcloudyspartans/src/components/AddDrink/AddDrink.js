@@ -4,6 +4,9 @@ import {Redirect} from 'react-router-dom';
 import cookie from 'react-cookies';
 import DrinkPhotos from '../DrinkPhotos/DrinkPhotos';
 import axios from 'axios';
+var swal = require('sweetalert')
+
+const URL = "http://localhost:4004"
 
 class AddDrink extends React.Component {
 
@@ -67,7 +70,7 @@ uploadFiles = files => {
       uploadFiles.append("file", files[index][0]);
     }
 
-    axios.post("http://localhost:4004/upload-files",uploadFiles).then(
+    axios.post(URL+ "/upload-files",uploadFiles).then(
       response => {
         console.log(response.data.message);
       },
@@ -101,7 +104,7 @@ uploadFiles = files => {
     if (file.length > 0) {
       let filenames = "";
       
-      fetch('http://localhost:4004/addfolder', {
+      fetch(URL+'/addfolder', {
         method: 'post',
         headers: {'Content-Type': 'application/json'},
         credentials : 'include',
@@ -111,7 +114,7 @@ uploadFiles = files => {
       }).
       then(response => {
       filenames = this.uploadFiles(file)
-      fetch('http://localhost:4004/addadrink', {
+      fetch(URL + '/addadrink', {
         method: 'post',
         headers: {'Content-Type': 'application/json'},
         credentials : 'include',
@@ -131,7 +134,8 @@ uploadFiles = files => {
       {
         if(response.status === 200)
         {
-            alert("Drink Added Successfully")
+          swal("Drink Added successfully!", " ", "success");
+            this.setState({Redirecttohome : true})
         }
      }
         })
@@ -148,17 +152,28 @@ else
   {
     let Redirecty = null;
     let Errors = null;
-    if(this.state.Redirection_Value === true)
-    {
-     Redirecty =  <Redirect to="/home" />
-    }
+   
       if(this.state.errors === true)
     {
-      Errors = <p class="error"> Error Signing Up </p>
+      Errors = <p class="error">Error Adding Drink</p>
     }
+    var Redirecttohome = null;
+    if(this.state.Redirecttohome === true){
+        Redirecttohome = (<Redirect to="/home" />)
+    }
+
+    var USERTYPE = localStorage.getItem("ACCOUNTTYPE")
+    var Redirecttologin = null;
+    if(USERTYPE!="admin"){
+      Redirecttologin = (<Redirect to="/admin/login"/>)
+    }
+
+
     return(
       <div>
       {Redirecty}
+      {Redirecttologin}
+      {Redirecttohome}
       <Container>
        <br />
        <h1 class="makeitcenetersignup">Add a Drink to Coffee with Cloudy Spartans </h1>

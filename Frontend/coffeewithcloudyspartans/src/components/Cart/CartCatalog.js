@@ -5,10 +5,9 @@ import Navigation from '../StarterPage/Navigation'
 import { Container, Row, Col, Button, Fa, Card, CardBody, ModalFooter } from 'mdbreact';
 import axios from 'axios'
 import {Link} from 'react-router-dom';
+const URL = "http://localhost:4004"
 
-
-      class CartCatalog extends React.Component {
-      
+class CartCatalog extends React.Component { 
        constructor(props) {
           super(props);
           this.state = {
@@ -38,12 +37,12 @@ import {Link} from 'react-router-dom';
       {
           console.log("KEY IS ", key)
 
-        fetch('http://localhost:4004/addtocart', {
+        fetch(URL+'/addtocart', {
             method: 'post',
             headers: {'Content-Type': 'application/json'},
             credentials : 'include',
             body: JSON.stringify({
-                userid : "test_user1",
+                userid : localStorage.getItem("usernamey"),
                 cartItems : {
                 productid: key.productid,
                   name : key.name,
@@ -60,8 +59,8 @@ import {Link} from 'react-router-dom';
               }
             else
               {
-                var Userid="test_user1"
-                axios.get('http://localhost:4004/cart/'+Userid).then(response=>
+                var Userid=localStorage.getItem("usernamey")
+                axios.get(URL+'/cart/'+Userid).then(response=>
                 {
                     console.log("response is ", JSON.stringify(response.data))
                     this.setState({
@@ -76,12 +75,12 @@ import {Link} from 'react-router-dom';
 
       handleClickDrinkDelete(key)
       {
-        fetch('http://localhost:4004/addtocart', {
+        fetch(URL+'/addtocart', {
             method: 'put',
             headers: {'Content-Type': 'application/json'},
             credentials : 'include',
             body: JSON.stringify({
-                userid : "test_user1",
+                userid : localStorage.getItem("usernamey"),
                 cartItems : {
                 productid: key.productid,
                   name : key.name,
@@ -98,8 +97,8 @@ import {Link} from 'react-router-dom';
               }
             else
               {
-                var Userid="test_user1"
-                axios.get('http://localhost:4004/cart/'+Userid).then(response=>
+                var Userid=localStorage.getItem("usernamey")
+                axios.get(URL+'/cart/'+Userid).then(response=>
                 {
                     console.log("response is ", JSON.stringify(response.data))
                     this.setState({
@@ -113,8 +112,8 @@ import {Link} from 'react-router-dom';
       }
       
         componentDidMount() {
-            var Userid="test_user1"
-            axios.get('http://localhost:4004/cart/'+Userid).then(response=>
+            var Userid=localStorage.getItem("usernamey")
+            axios.get(URL+'/cart/'+Userid).then(response=>
             {
                 console.log("response is ", JSON.stringify(response.data))
                 this.setState({
@@ -126,12 +125,17 @@ import {Link} from 'react-router-dom';
         }
       
         render() {
-      
           let Redirect_to_login = null;
               let redirecty_value = null;
+              var USERTYPE = localStorage.getItem("ACCOUNTTYPE")
+              if(USERTYPE!="user"){
+                Redirect_to_login = (<Redirect to="/login"/>)
+              }
+              if(this.state.Cart.length){
               redirecty_value  = (
                 <div class="middle">
-                 <Link to="/payments"><button className="btn btn-primary">Check Out</button></Link>
+                <div className="float-right">
+                 </div>
                  <table class="tabledef">
                  <tbody>
                  {  
@@ -157,11 +161,15 @@ import {Link} from 'react-router-dom';
                    </table>
                  </div>
                );
+                  }
+                  else{
+                    redirecty_value  = ( <h3 className="padleft">You do not have any items in the cart</h3> )
+                  }
       
           return (
             <div>
-            <Navigation />
             {Redirect_to_login}
+            <Navigation />
             <div class="divide">
             </div>
             <div id="bodydiv" >

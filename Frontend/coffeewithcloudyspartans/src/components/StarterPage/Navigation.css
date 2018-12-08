@@ -12,6 +12,21 @@
     float: right !important;
   }
 
+  .bg-fill
+  {
+    background-color: rgb(255, 255, 255);
+    color: #fff;
+  }
+
+.spacebetweenone
+{
+  padding-left: 50px; 
+}
+
+.spacebetweentwo
+{
+  padding-left: 400px;
+}
 .addspaceinnavbar
 {
   padding-left: 450px;
