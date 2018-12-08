@@ -37,8 +37,12 @@ func generateAmount(w http.ResponseWriter, r *http.Request) {
  
 //Get all the order status
 func allOrderStatus(w http.ResponseWriter, r *http.Request) {
+
 	fmt.Println("In order status")
 	respondWithJson(w, http.StatusOK,"Hit")
+
+	defer r.Body.Close()
+
 	orders, err := ccs.FindAll()
 	if err != nil {
 		respondWithError(w, http.StatusInternalServerError, err.Error())
@@ -49,6 +53,7 @@ func allOrderStatus(w http.ResponseWriter, r *http.Request) {
 }
 
 func processOrders(w http.ResponseWriter, r *http.Request) {
+	defer r.Body.Close()
 	var order Order
 	var payment Payment
 	//params := mux.Vars(r)

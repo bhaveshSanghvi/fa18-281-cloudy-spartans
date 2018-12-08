@@ -54,7 +54,6 @@ class Login extends React.Component {
   {
     let Redirecty = null;
     let Errors = null;
-      console.log("HEEREE")
     if(this.state.Redirection_Value === true && cookie.load('cookie'))
     {
      Redirecty =  <Redirect to="/home" />
@@ -66,16 +65,6 @@ class Login extends React.Component {
     return(
       <div>
     {Redirecty}
-       {/* <nav class="navbar navbar-expand-lg navbar-light bg-transparent">
-        <a class="navbar-brand" href="#"><img alt="HomeAway birdhouse" class="site-header-birdhouse__image" role="presentation" src="https://static.savings-united.com/shop/20251/logo/Logo_0062_HomeAway.png" height="150" width="150"/></a>
-            <ul class="navbar-nav mr-auto">
-            </ul>
-            <ul class="navbar-nav">
-                <li>
-                <a class="site-header-birdhouse" href="/" title="Learn more"><img alt="HomeAway birdhouse" class="site-header-birdhouse__image" role="presentation" src="https://lh3.googleusercontent.com/peTB5wWV332_otZJMJ897LqTv2B40lity4VDuStgZ4U8ocCGKUBGisnjSi9TyhXSOydm=s180" height="50" width="50"/></a>          
-                </li>
-            </ul>
-    </nav> */}
     <br />
       <Container>
        <h1 class="makeitceneter"> Log in to Coffee with Cloudy Spartans</h1>

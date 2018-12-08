@@ -163,6 +163,7 @@ func (m *CCSDB) FindAll() ([]Order, error) {
 }
 
 //Find List
+
 func (m *CCSDB) FindByUserId(id string) (Order, error) {
         session := GetMongoSession()
 	db = session.DB("testing")
@@ -171,6 +172,13 @@ func (m *CCSDB) FindByUserId(id string) (Order, error) {
         err := db.C(COLLECTION).Find(bson.M{ "name" : id}).One(&order)
         fmt.Printf("%v",order)
         defer session.Close()
+
+func (m *CCSDB) FindByUserId(id1 string) (Order, error) {
+        var order Order
+        fmt.Printf(id1)
+        err := db.C(COLLECTION).Find(bson.M{ "name" : id1}).One(&order)
+	fmt.Printf("%v",order)
+
 	return order, err
 }
 

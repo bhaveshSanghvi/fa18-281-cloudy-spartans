@@ -15,8 +15,7 @@ class Navigation extends Component {
     }
     render(){
         let navLogin = null;
-        let USERTYPE = "traveler"
-        if(USERTYPE==="traveler"){
+        if(true){
             console.log("Able to read cookie");
             let tripsboard =(
               <li class="nav-item nav-link lower" >
@@ -44,8 +43,8 @@ class Navigation extends Component {
                      <p class="backwhite"> Login </p>
                     </a>
                     <div class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
-                        <a class="dropdown-item" ><Link to="/login">Traveler Login</Link></a>
-                        <a class="dropdown-item" ><Link to="/owner/login">Owner Login</Link></a>
+                        <a class="dropdown-item" ><Link to="/login">Login</Link></a>
+                        <a class="dropdown-item" ><Link to="/admin/login">Admin Login</Link></a>
                     </div>
                 </li>
             )
@@ -71,9 +70,9 @@ class Navigation extends Component {
                        {navLogin}
                         &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;
                         <li class="nav-item">
-                        <a class="btn btn-outline-primary bgwhite roundy" href="/owner/login" role="button">Add a Drink</a> 
+                        <a class="btn btn-outline-primary bgwhite roundy" href="/admin/login" role="button">Add a Drink</a> 
                         &nbsp; &nbsp; &nbsp; 
-                        <a class="site-header-birdhouse lower" href="/home" title="Learn more"><img alt="HomeAway birdhouse" class="site-header-birdhouse__image" role="presentation" src="https://img.icons8.com/doodle/50/000000/coffee-to-go.png"/></a>          
+                        <a class="site-header-birdhouse lower" href="/home" title="Learn more"><img alt="" class="" role="presentation" src="https://img.icons8.com/doodle/50/000000/coffee-to-go.png"/></a>          
                         </li>
                     </ul>
                 </div>

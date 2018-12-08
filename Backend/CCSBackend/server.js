@@ -2,6 +2,7 @@ const cors = require('cors');
 var express = require('express');
 var app = express();
 var bodyParser = require('body-parser');
+var axios = require('axios');
 app.use(express.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(cors({ origin: 'http://localhost:3000', credentials: true }));
@@ -42,7 +43,7 @@ app.get('/getalldrinks',function(req,res){
 
 app.get('/order/:orderid',function(req,res){
   const orderid = req.params.orderid;
-  const url11 = "http://13.57.50.197:3001/order/"+orderid;
+  const url11 = "http://18.144.63.198:3001/order/"+orderid;
   console.log("url is ",url11)
 
   axios.get(url11).then(response=>
@@ -89,7 +90,7 @@ app.post("/processOrders/:orderid",(req,res)=>{
     name : req.body.name,
     userAmount: req.body.price
   }
-  axios.post("http://13.57.50.197:3001/orders",data).then((response)=>{
+  axios.post("http://18.144.63.198:3001/orders",data).then((response)=>{
 
     res.sendStatus(200)
 
@@ -131,6 +132,120 @@ app.post('/signup',function(req,res){
 });
 
 
+const url_4 = "http://52.8.43.95:3000/cart";
+app.post('/addtocart',function(req,res){
+  console.log("REQ BOIDY", req.body)
+  console.log("url is ",url_4)
+  // axios.post(url_4,
+  // {
+  //   userid : req.body.userid,
+  //         productid : req.body.product,
+  //         cartItems : {
+  //             name: req.body.name,
+  //             price : req.body.price,
+  //             size: req.body.size,
+  //             count : 1
+  //   }
+  // }).then(response=>
+  //     {
+  //         console.log("response is ", response.data)
+  //         res.status(200).send(response.data);
+  //     })
+
+  fetch(url_4, {
+    method: 'post',
+    headers: {'Content-Type': 'application/json'},
+    credentials : 'include',
+    body: JSON.stringify({
+      userid : req.body.userid,
+      cartItems : {
+         productid: req.body.cartItems.productid,
+          name: req.body.cartItems.name,
+          price : req.body.cartItems.price,
+          size: req.body.cartItems.size,
+          count : 1
+      }
+    })})
+.then(response => {
+  if(response.status === 400)
+    {
+      this.setState({errors : true})
+    }
+  else
+    {
+      response.json()
+      .then(user => {
+        console.log("NAME" + JSON.stringify(user))
+        res.send(user)
+        res.end("Success")
+        })
+    }
+  })
+});
+
+
+const url_6 = "http://52.8.43.95:3000/cart";
+app.put('/addtocart',function(req,res){
+  console.log("REQ BODY", req.body)
+  fetch(url_6, {
+    method: 'put',
+    headers: {'Content-Type': 'application/json'},
+    credentials : 'include',
+    body: JSON.stringify({
+      userid : req.body.userid,
+      cartItems : {
+         productid: req.body.cartItems.productid,
+          name: req.body.cartItems.name,
+          price : req.body.cartItems.price,
+          size: req.body.cartItems.size,
+          count : 1
+      }
+    })})
+.then(response => {
+  if(response.status === 400)
+    {
+      this.setState({errors : true})
+    }
+  else
+    {
+      response.json()
+      .then(user => {
+        console.log("NAME" + JSON.stringify(user))
+        res.send(user)
+        res.end("Success")
+        })
+    }
+  })
+});
+
+
+const url_7 = "http://52.8.43.95:3000/checkout";
+app.get('/checkout',function(req,res){
+  console.log("REQ BODY", req.body)
+  fetch(url_7, {
+    method: 'get',
+    credentials : 'include'
+  })
+.then(response => {
+  if(response.status === 400)
+    {
+      this.setState({errors : true})
+    }
+  else
+    {
+      console.log(response)
+      res.send("Success")
+      res.end("Success")
+    }
+  })
+});
+
+
+
+
+
+
+
 app.post('/addfolder',function(req,res){
   console.log("REQ BODY IS", req.body)
   FolderName = req.body.FolderName
@@ -144,7 +259,6 @@ var storagePropFiles = multer.diskStorage({
     callback(null, createDirectory(FolderName));
   },
   filename: function(req, file, callback) {
-   // console.log("req", req.body);
     callback(null, file.originalname);
   }
 });
@@ -209,6 +323,7 @@ app.post("/upload-files/", uploadPropFiles.any(), function(req, res, next) {
       }}});
 
 
+
 app.post('/amount',function(req,res){
   console.log("REQ BODY", req.body);
   console.log(req.body.name,req.body.count);
@@ -218,7 +333,7 @@ app.post('/amount',function(req,res){
     count : req.body.count 
   }
 
-  axios.post("http://13.57.50.197:3001/amount",data).then((response)=>{
+  axios.post("http://18.144.63.198:3001/amount",data).then((response)=>{
     console.log(response.status);
     console.log(response.data);
     res.status(200).json(response.data);
@@ -271,6 +386,21 @@ fetch("http://13.57.50.197:3001/amount", {
 
   */
 });
+
+app.get('/cart/:id',function(req,res){
+  const url5="http://52.8.43.95:3000/cart/"+ req.params.id;
+  console.log("url is ",url5)
+  console.log("userid", req.params.id);
+
+  axios.get(url5).then(response=>
+      {
+          console.log("response is ", response.data)
+          res.status(200).send(response.data);
+      })
+      
+    })
+  
+
 
 app.listen(4004, () => {
     console.log("Listening on port 4004")

@@ -1,29 +1,17 @@
 import React,{Component} from 'react';
-// import PropTypes from 'prop-types';
-// import { withStyles } from '@material-ui/core/styles';
-// import Card from '@material-ui/core/Card';
-// import CardActionArea from '@material-ui/core/CardActionArea';
-// import CardActions from '@material-ui/core/CardActions';
-// import CardContent from '@material-ui/core/CardContent';
-// import CardMedia from '@material-ui/core/CardMedia';
-// import Button from '@material-ui/core/Button';
-// import Typography from '@material-ui/core/Typography';
-// import {Redirect} from 'react-router-dom';
 import './Drinks.css';
 import {Route} from 'react-router-dom'
-// import  { Carousel, CarouselInner, CarouselItem, View, Container } from 'mdbreact';
- import Link from 'react-router-dom/Link';
-
+import Link from 'react-router-dom/Link';
 
 class Drinks extends Component {
-
     constructor(props) {
     super(props);
     this.state = {
       photos : []
     }
   }
-componentDidMount()
+
+  componentDidMount()
   {
         fetch('http://localhost:4004/getDrinkImg', {
           method: 'post',
@@ -94,6 +82,7 @@ componentDidMount()
               <div class="ui label">Price : {this.props.price}</div>
             </div>
           </div>
+          <button className="btn btn-primary" onClick={drinkinfo=>this.props.drinkclicked(this.props.drinkinfo)}>Add to Cart</button>
         </div>
         </div>
         </div>

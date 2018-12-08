@@ -5,7 +5,7 @@ import {Redirect} from 'react-router-dom';
 import cookie from 'react-cookies';
 class SignUp extends React.Component {
 
-   constructor(props) {
+  constructor(props) {
     super(props);
     this.state = {
       Userid : '',
@@ -15,7 +15,16 @@ class SignUp extends React.Component {
       Redirection_Value : false,
       errors : false
     }
-  }  
+  }
+
+  /*
+{
+	"Userid":"abc",
+	"email": "abc@abc.com",
+	"UserType": "admin",
+	"Password": "abc123"
+}
+  */
 
   onUseridChange = (event) => {
     this.setState({Userid: event.target.value})
@@ -90,7 +99,7 @@ class SignUp extends React.Component {
           <Row >
             <Col md="4" className="mx-auto">
               <Card>
-                 <CardBody className="mx-4">
+                <CardBody className="mx-4">
                   <div className="text-center">
                     <h3 className="dark-grey-text mb-5">Account SignUp</h3>
                     <hr></hr>
@@ -111,8 +120,8 @@ class SignUp extends React.Component {
                     <Button type="button" gradient="blue" className="btn btn-primary btn-lg btn-block" onClick = {this.onSubmitSignIn}>Sign Up</Button>
                       <hr></hr>
                   </div>
-                </CardBody>  
-	     </Card>
+                </CardBody>     
+              </Card>
             </Col>
           </Row>
         </section>

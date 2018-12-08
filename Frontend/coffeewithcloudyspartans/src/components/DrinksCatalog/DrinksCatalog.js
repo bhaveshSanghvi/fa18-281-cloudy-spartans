@@ -1,17 +1,20 @@
 import React from 'react';
-import './DrinksCatalog.css'
+ import './DrinksCatalog.css'
 import {Redirect} from 'react-router';
+import {Link} from 'react-router-dom';
 import Drinks from '../Drinks/Drinks'
 import Navigation from '../StarterPage/Navigation'
-
+import { Container, Row, Col, Button, Fa, Card, CardBody, ModalFooter } from 'mdbreact';
 class DrinksCatalog extends React.Component {
 
-  constructor(props) {
+ constructor(props) {
     super(props);
     this.state = {
-      Drinks: []
+      Drinks: [],
+      drinkid: ""
     };
     this.handleClickPage = this.handleClickPage.bind(this);
+    this.handleClickDrink = this.handleClickDrink.bind(this);
   }
 
   handleClickPage(event) {
@@ -26,6 +29,37 @@ class DrinksCatalog extends React.Component {
     this.setState(
       {propId:key})
     console.log(this.state)
+}
+
+handleClickDrink(key){
+  console.log("Drink ID " + JSON.stringify(key));
+  localStorage.setItem("DrinkItem" , key)
+  fetch('http://localhost:4004/addtocart', {
+    method: 'post',
+    headers: {'Content-Type': 'application/json'},
+    credentials : 'include',
+    body: JSON.stringify({
+        userid : "test_user1",
+        cartItems : {
+          productid : key.id,
+          name : key.name,
+          price : key.price,
+          size : key.size,
+          count : 1
+        }
+    })
+  })
+  .then(response => {
+    if(response.status === 400)
+      {
+        this.setState({errors : true})
+      }
+    else
+      {
+        alert("Drink Added")
+     }
+    })
+
 }
 
   componentDidMount() {
@@ -45,18 +79,23 @@ class DrinksCatalog extends React.Component {
         let redirecty_value = null;
         redirecty_value  = (
           <div class="middle">
+           <Link to="/mycart"><button className="btn btn-primary">Go to Cart</button></Link>
            <table class="tabledef">
            <tbody>
-           {
+           {  
              this.state.Drinks.map((drink, index) => {
                console.log("TRIPS IS ", drink)
                  return ( 
                    <Drinks
                     key={index}
+                    drinkinfo={drink}
+                    id = {drink.productid}
                     name={drink.name}
-                    sizes={drink.sizes}
+                    sizes={drink.size}
                     price={drink.price}
-                   />
+                    clicked={this.handleClick}
+                    drinkclicked= {this.handleClickDrink}
+                   />  
                  );
                })
              }

@@ -17,15 +17,7 @@ class DrinkDescription extends Component
 	{
 
 	 var id = localStorage.getItem("activekey");
-	// 	 var url = 'http://localhost:4004/drinkdescription/' + id
-	// 	    fetch(url, {
-	// 	      method: 'get',
-    //           credentials : 'include',
-	// 	    })
-	// 	    .then(response => response.json())
-	// 	    .then(drinks => {
-    //             console.log(drinks);
-	// 	  })
+
 
 	     fetch('http://localhost:4004/getDrinkImg', {
 		      method: 'post',
