@@ -10,6 +10,7 @@ const fetch = require("node-fetch");
 const request = require("request");
 app.use(bodyParser.json());
 let fs = require("fs");
+var axios = require("axios")
 app.use(function(req, res, next) {
     res.setHeader('Access-Control-Allow-Origin', 'http://localhost:3000');
     res.setHeader('Access-Control-Allow-Credentials', 'true');
@@ -18,6 +19,7 @@ app.use(function(req, res, next) {
     res.setHeader('Cache-Control', 'no-cache');
     next();
   });
+  var requestp = require('request-promise');
 
 var globalStorage = '';
 var error = null;
@@ -38,10 +40,23 @@ app.get('/getalldrinks',function(req,res){
       getData(url);
 });
 
+app.get('/order/:orderid',function(req,res){
+  const orderid = req.params.orderid;
+  const url11 = "http://13.57.50.197:3001/order/"+orderid;
+  console.log("url is ",url11)
+
+  axios.get(url11).then(response=>
+      {
+          console.log("response is ", response.data)
+          res.status(200).send(response.data);
+      })
+    })
+
+
 const url_2 = "http://54.177.150.212:3001/addadrink";
 
 app.post('/addadrink',function(req,res){
-   console.log("REQ BODY IS", req.body)
+   console.log("REQ BODY IS", req.body) 
    fetch(url_2, {
         method: 'post',
         headers: {'Content-Type': 'application/json'},
@@ -63,7 +78,31 @@ app.post('/addadrink',function(req,res){
           res.end("Success")
         }
       })
+      
 });
+
+
+app.post("/processOrders/:orderid",(req,res)=>{
+  const orderid = req.params.orderid;
+
+  const data = {
+    name : req.body.name,
+    userAmount: req.body.price
+  }
+  axios.post("http://13.57.50.197:3001/orders",data).then((response)=>{
+
+    res.sendStatus(200)
+
+  }).catch((error)=>{
+      res.status(201).json({
+        erorr : "We could not process orders"
+      });
+  })
+
+
+})
+
+
 
 const url_3 = "http://54.177.74.65:3000/signup";
 app.post('/signup',function(req,res){
@@ -169,6 +208,69 @@ app.post("/upload-files/", uploadPropFiles.any(), function(req, res, next) {
         });
       }}});
 
+
+app.post('/amount',function(req,res){
+  console.log("REQ BODY", req.body);
+  console.log(req.body.name,req.body.count);
+
+  const data ={
+    name : req.body.name,
+    count : req.body.count 
+  }
+
+  axios.post("http://13.57.50.197:3001/amount",data).then((response)=>{
+    console.log(response.status);
+    console.log(response.data);
+    res.status(200).json(response.data);
+  }).catch((error)=>{
+    console.log("inside error");
+    console.log(error);
+    res.status(201).json({
+      error
+    })
+  })
+
+
+  /*
+  axios.post("http://13.56.16.252:3001/amount",data).then((response)=>{
+    console.log("inside response");
+    console.log(response.status);
+    console.log(response.data);
+    res.sendStatus(200);
+  }).catch((error)=>{
+   console.log("inside catch error");
+   console.log(error);
+   res.sendStatus(201);
+  });
+  */
+ /*
+fetch("http://13.57.50.197:3001/amount", {
+    method: 'POST',
+    json: true,
+    headers: {'Content-Type': 'application/json'},
+    body: JSON.stringify({
+            name : req.body.name,
+            count : req.body.count        
+})
+})
+.then((response) => {
+  console.log(response)
+  if(response.status === 400)
+    {
+      console.log("err");
+      res.send("err");
+    }
+  else
+    {
+      console.log("successs");
+      console.log(response);
+      res.send("Success")
+      res.end("Success")
+    }
+  })  
+
+  */
+});
 
 app.listen(4004, () => {
     console.log("Listening on port 4004")
